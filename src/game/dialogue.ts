@@ -479,6 +479,23 @@ export const IGNORED: Line[] = [
   k("guess he's busy. it's fine. it's whatever."),
 ];
 
+/** when the player passes on a reading — they just hang in the hideout instead */
+export const DECLINE_LINES: Line[] = [
+  a("no cards? easy. hang as long as you want — the curb's public."),
+  m("yay, company with no agenda. we're just gonna keep yelling about libras then."),
+  k("fine. the cards were gonna say something dumb anyway."),
+];
+
+/** right after the player taps an answer — they swing around and pick at it */
+export const ANSWER_BEATS: Line[] = [
+  a("hold on. you're just gonna say that out loud? okay — defend it."),
+  m("wait wait wait. say more. that's either your best take or your worst one."),
+  k("huh. noted. probably wrong, but noted."),
+  a("okay, you've got an opinion. talk to us — why that one?"),
+  m("see, this is why we asked. go on, we're listening—"),
+  k("bold answer. incorrect, but bold. convince us."),
+];
+
 /* ------------------------------------------------------------------ */
 /*  REACTIONS during the reading — emi & cole chiming in              */
 /* ------------------------------------------------------------------ */

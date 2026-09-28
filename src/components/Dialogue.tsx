@@ -67,7 +67,7 @@ export default function Dialogue() {
 
             {choices && done && (
               <div className="mt-2 flex flex-col items-start gap-1.5 border-t border-white/10 pt-2">
-                <div className="text-[10px] tracking-widest text-[#e6c8ff]/70">they're waiting on you</div>
+                <div className="text-[11px] tracking-widest text-[#e6c8ff]/70">they're waiting on you</div>
                 <div className="flex flex-wrap gap-2">
                   {choices.map((c) => (
                     <button
@@ -115,6 +115,15 @@ export default function Dialogue() {
                     {t.emoji} {t.label}
                   </button>
                 ))}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    useGame.getState().declineReading();
+                  }}
+                  className="pixel rounded-[3px] border border-white/15 bg-white/5 px-3 py-1.5 text-[13px] text-white/55 transition hover:bg-white/15 hover:text-white/90"
+                >
+                  🌙 nah, just hang
+                </button>
               </div>
             )}
             {talkStep === 3 && topic && done && (

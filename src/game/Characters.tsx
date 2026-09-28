@@ -220,6 +220,7 @@ function buildMats(look: Look) {
     shell: lit(T.makeHairShellTexture(look.hair, look.seed), { alphaTest: 0.5 }),
     curtain: look.longHair ? lit(T.makeHairCurtainTexture(look.hair, look.seed), { alphaTest: 0.5 }) : null,
     hairFlat: flat(look.hair.hair),
+    hairUnder: flat(look.hair.under ?? look.hair.hair),
     torso: lit(T.makeTorsoTexture(look.top)),
     upper: lit(T.makeLimbTexture(look.face.skin)),
     fore: lit(T.makeLimbTexture(look.face.skin, { band: look.wristband, bandRows: [52, 57] })),
@@ -405,11 +406,13 @@ function Girl({ id }: { id: GirlId }) {
     const s = S.current;
     const t = state.clock.elapsedTime;
     const now = Date.now();
-    const { line, lineAt, phase } = useGame.getState();
+    const { line, lineAt, phase, addressUntil } = useGame.getState();
     const speakDur = THREE.MathUtils.clamp(line.text.length * 65, 1500, 5200);
     const talking = now - lineAt < speakDur;
     const speaking = talking && line.who === id;
-    const engaged = phase === "talk" || phase === "shuffle" || phase === "spread" || phase === "reading";
+    // answering a question turns the whole group toward the player for a while
+    const facePlayer = now < addressUntil;
+    const engaged = phase === "talk" || phase === "shuffle" || phase === "spread" || phase === "reading" || facePlayer;
     const D = THREE.MathUtils.damp;
 
     /* ---- react to a new line ---- */
@@ -746,9 +749,10 @@ function Girl({ id }: { id: GirlId }) {
 
             {/* EMI — OVERSIZED slouchy cat-ear beanie with chunky braided tassels */}
             {id === "emi" && (
-              // sized to the skull, not floated above it: the rim lands on the
-              // forehead and the brim band hugs the hair instead of flaring off it
-              <group position={[0, 0.035, -0.012]} rotation-x={-0.11}>
+              // sized to the skull: the rim lands on the forehead so her blunt fringe
+              // peeks out from under the brim, and the flaps sit high enough that the
+              // bob shows all the way down past her ear
+              <group position={[0, 0.066, -0.012]} rotation-x={-0.11}>
                 <mesh geometry={G.beanie} material={M.hat} castShadow />
                 {/* folded ribbed brim, wrapping the head */}
                 <mesh position={[0, -0.008, 0]} material={M.hatAccent} castShadow>
@@ -760,15 +764,15 @@ function Girl({ id }: { id: GirlId }) {
                     <coneGeometry args={[0.1, 0.17, 4]} />
                   </mesh>
                 ))}
-                {/* ear flaps */}
+                {/* ear flaps — raised and shortened so hair escapes underneath */}
                 {[-1, 1].map((s) => (
-                  <mesh key={`flap${s}`} position={[s * 0.216, -0.06, 0.0]} scale={[0.42, 1, 0.9]} material={M.hat} castShadow>
+                  <mesh key={`flap${s}`} position={[s * 0.216, -0.045, 0.0]} scale={[0.42, 0.62, 0.85]} material={M.hat} castShadow>
                     <sphereGeometry args={[0.07, 7, 6]} />
                   </mesh>
                 ))}
                 {/* braided tassels */}
                 {[-1, 1].map((s) => (
-                  <group key={`br${s}`} ref={s < 0 ? braidL : braidR} position={[s * 0.205, -0.13, 0.0]}>
+                  <group key={`br${s}`} ref={s < 0 ? braidL : braidR} position={[s * 0.205, -0.09, 0.0]}>
                     {[0, 1, 2, 3, 4, 5, 6].map((i) => (
                       <mesh key={i} position={[(i % 2 ? 1 : -1) * 0.007, -i * 0.03, 0]} material={i % 2 ? M.hat : M.hatAccent} castShadow>
                         <sphereGeometry args={[0.02, 6, 5]} />
@@ -783,6 +787,20 @@ function Girl({ id }: { id: GirlId }) {
                   </group>
                 ))}
               </group>
+            )}
+            {id === "emi" && (
+              // the bob refuses to live entirely in the hat: side locks fall past the
+              // flaps, a nape clump sits under the brim, yellow underlayer at the tips
+              <>
+                {[-1, 1].map((s) => (
+                  <group key={`bob${s}`}>
+                    <Spike base={[s * 0.135, -0.015, 0.105]} dir={[s * 0.25, -1, 0.1]} r={0.045} h={0.155} material={M.hairFlat} />
+                    <Spike base={[s * 0.16, -0.02, -0.06]} dir={[s * 0.3, -1, -0.15]} r={0.042} h={0.15} material={M.hairFlat} />
+                    <Spike base={[s * 0.148, -0.135, 0.065]} dir={[s * 0.2, -1, 0.05]} r={0.03} h={0.05} material={M.hairUnder} />
+                  </group>
+                ))}
+                <Spike base={[0, -0.03, -0.16]} dir={[0, -1, -0.25]} r={0.05} h={0.13} material={M.hairFlat} />
+              </>
             )}
 
             {/* COLE — camo cap, messy spiky blue hair, lollipop */}

@@ -137,7 +137,7 @@ function Spread() {
 
   return (
     <div className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-col items-center pb-24 sm:pb-24">
-      <div className="pixel hud-shadow mb-2 text-[12px] text-[#ffe600]">
+      <div className="pixel hud-shadow mb-2 text-[13px] text-[#ffe600]">
         pick 3 — past · present · destiny <span className="text-white/60">({picked.length}/3)</span>
       </div>
       <div className="pointer-events-auto flex items-end justify-center gap-1.5 sm:gap-3">
@@ -168,7 +168,7 @@ function Spread() {
                 </div>
               </div>
               {sel && (
-                <div className="pixel absolute -top-2.5 left-1/2 z-10 -translate-x-1/2 rounded-[2px] bg-[#ffe600] px-1.5 py-0.2 text-[9px] font-bold text-black shadow">
+                <div className="pixel absolute -top-2.5 left-1/2 z-10 -translate-x-1/2 rounded-[2px] bg-[#ffe600] px-1.5 py-0.2 text-[10px] font-bold text-black shadow">
                   {["I · PAST", "II · PRESENT", "III · DESTINY"][pi]}
                 </div>
               )}
@@ -176,7 +176,7 @@ function Spread() {
           );
         })}
       </div>
-      <div className="pixel hud-shadow mt-2.5 text-[10px] text-white/50">
+      <div className="pixel hud-shadow mt-2.5 text-[11px] text-white/50">
         click card to draw · click again to put back into spread
       </div>
     </div>
@@ -239,7 +239,7 @@ function Reading() {
     return (
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center p-4">
         <div className="vn-box pointer-events-auto max-h-[90vh] w-[min(540px,94vw)] overflow-y-auto rounded-[6px] border border-[#ff2a7f]/50 bg-black/85 p-5 text-center shadow-[0_0_35px_rgba(255,42,127,0.25)]">
-          <div className="pixel text-[10px] tracking-widest text-[#ffe600]">✦ COMPLETE TAROT SPREAD ✦</div>
+          <div className="pixel text-[11px] tracking-widest text-[#ffe600]">✦ COMPLETE TAROT SPREAD ✦</div>
 
           {/* mini thumbnail triumvirate */}
           <div className="my-3 flex justify-center gap-2">
@@ -249,7 +249,7 @@ function Reading() {
                 className="relative h-20 w-14 overflow-hidden rounded-[3px] border-2 border-black shadow-md"
               >
                 <CardFace card={p.card} reversed={p.reversed} />
-                <div className="pixel absolute bottom-0 inset-x-0 bg-black/80 py-0.5 text-[7px] text-[#ffe600]">
+                <div className="pixel absolute bottom-0 inset-x-0 bg-black/80 py-0.5 text-[8px] text-[#ffe600]">
                   {["I", "II", "III"][i]}
                 </div>
               </div>
@@ -264,7 +264,7 @@ function Reading() {
             {title}
           </div>
 
-          <div className="pixel mt-1 flex justify-center gap-1.5 text-[9px] text-white/50">
+          <div className="pixel mt-1 flex justify-center gap-1.5 text-[10px] text-white/50">
             <span>Elemental balance:</span>
             {fallback.elements.map((el, i) => (
               <span key={i} className="rounded bg-white/10 px-1 py-0.5 text-white/80">
@@ -274,7 +274,7 @@ function Reading() {
           </div>
 
           <div
-            className={`pixel mt-3.5 text-[14px] leading-relaxed text-white/95 ${
+            className={`pixel mt-3.5 text-[15px] leading-relaxed text-white/95 ${
               waiting ? "blink-soft italic text-white/60" : ""
             }`}
           >
@@ -285,13 +285,13 @@ function Reading() {
             <div className="mt-5 flex flex-wrap justify-center gap-2.5">
               <button
                 onClick={() => useGame.getState().pullAgain()}
-                className="pixel rounded-[3px] border border-[#ffe600]/70 bg-[#ffe600]/15 px-3.5 py-2 text-[13px] font-bold text-[#ffe600] transition hover:bg-[#ffe600]/30 shadow"
+                className="pixel rounded-[3px] border border-[#ffe600]/70 bg-[#ffe600]/15 px-3.5 py-2 text-[14px] font-bold text-[#ffe600] transition hover:bg-[#ffe600]/30 shadow"
               >
                 🔮 shuffle full deck & draw again
               </button>
               <button
                 onClick={() => useGame.getState().hang()}
-                className="pixel rounded-[3px] border border-white/25 bg-white/10 px-3.5 py-2 text-[13px] text-white transition hover:bg-white/25"
+                className="pixel rounded-[3px] border border-white/25 bg-white/10 px-3.5 py-2 text-[14px] text-white transition hover:bg-white/25"
               >
                 🌙 hang in the hideout
               </button>
@@ -316,7 +316,7 @@ function Reading() {
             <CardFace card={d.card} reversed={d.reversed} big />
           </div>
           {d.reversed && (
-            <div className="pixel absolute -top-2 left-1/2 -translate-x-1/2 rounded-[2px] bg-[#ff2a2a] px-2 py-0.5 text-[9px] font-bold text-white shadow">
+            <div className="pixel absolute -top-2 left-1/2 -translate-x-1/2 rounded-[2px] bg-[#ff2a2a] px-2 py-0.5 text-[10px] font-bold text-white shadow">
               REVERSED ⟲
             </div>
           )}
@@ -325,10 +325,10 @@ function Reading() {
         {/* Card reading info & banter */}
         <div className="flex min-w-0 flex-1 flex-col">
           <div className="flex items-center justify-between border-b border-white/10 pb-1">
-            <div className="pixel text-[11px] tracking-widest text-[#ffe600]">
+            <div className="pixel text-[12px] tracking-widest text-[#ffe600]">
               {pos.label} <span className="text-white/45">· {pos.sub}</span>
             </div>
-            <div className="flex gap-1 text-[10px]">
+            <div className="flex gap-1 text-[11px]">
               <button
                 onClick={() => setTab("reading")}
                 className={`pixel rounded px-1.5 py-0.5 ${
@@ -350,16 +350,16 @@ function Reading() {
 
           {/* Keywords & Element pills */}
           <div className="mt-1.5 flex flex-wrap gap-1">
-            <span className="pixel rounded-[2px] bg-[#ff2a7f]/30 px-1.5 py-0.5 text-[9px] text-[#ffb3d9]">
+            <span className="pixel rounded-[2px] bg-[#ff2a7f]/30 px-1.5 py-0.5 text-[10px] text-[#ffb3d9]">
               {d.card.arcana.toUpperCase()}
             </span>
             {d.card.suit && (
-              <span className="pixel rounded-[2px] bg-white/10 px-1.5 py-0.5 text-[9px] text-white/80">
+              <span className="pixel rounded-[2px] bg-white/10 px-1.5 py-0.5 text-[10px] text-white/80">
                 {SUIT_INFO[d.card.suit].name} ({d.card.element})
               </span>
             )}
             {d.card.keywords.map((k) => (
-              <span key={k} className="pixel rounded-[2px] bg-white/10 px-1.5 py-0.5 text-[9px] text-white/70">
+              <span key={k} className="pixel rounded-[2px] bg-white/10 px-1.5 py-0.5 text-[10px] text-white/70">
                 {k}
               </span>
             ))}
@@ -368,14 +368,14 @@ function Reading() {
           {/* Tab content */}
           {tab === "reading" ? (
             <div className="mt-2 min-h-[70px]">
-              <div className="pixel text-[13px] leading-relaxed text-white/95 sm:text-[14px]">
+              <div className="pixel text-[14px] leading-relaxed text-white/95 sm:text-[15px]">
                 <span className="font-bold" style={{ color: GIRLS.jetta.color }}>
                   JETTA:{" "}
                 </span>
                 “{meaning}”
               </div>
               {r && (
-                <div className="pixel mt-2 border-l-2 border-white/20 pl-2 text-[12px] leading-relaxed text-white/65">
+                <div className="pixel mt-2 border-l-2 border-white/20 pl-2 text-[13px] leading-relaxed text-white/65">
                   <span className="font-bold" style={{ color: GIRLS[r.who].color }}>
                     {GIRLS[r.who].name}:{" "}
                   </span>
@@ -384,7 +384,7 @@ function Reading() {
               )}
             </div>
           ) : (
-            <div className="pixel mt-2 min-h-[70px] text-[12px] leading-relaxed text-white/80">
+            <div className="pixel mt-2 min-h-[70px] text-[13px] leading-relaxed text-white/80">
               <div className="text-[#ffe600] font-bold">Rider-Waite Symbolism:</div>
               <div className="mt-1 italic">{d.card.symbolism}</div>
             </div>
@@ -392,7 +392,7 @@ function Reading() {
 
           {/* Navigation */}
           <div className="mt-auto flex items-center justify-between border-t border-white/10 pt-2">
-            <div className="pixel text-[10px] text-white/40">
+            <div className="pixel text-[11px] text-white/40">
               Card {revealIdx + 1} of 3 {revealIdx === 2 ? "· final card" : ""}
             </div>
             <button
@@ -400,7 +400,7 @@ function Reading() {
                 if (revealReady()) useGame.getState().nextReveal();
               }}
               disabled={!ready}
-              className={`pixel rounded-[3px] border border-white/30 bg-white/15 px-3 py-1.5 text-[13px] font-bold text-white shadow transition ${
+              className={`pixel rounded-[3px] border border-white/30 bg-white/15 px-3 py-1.5 text-[14px] font-bold text-white shadow transition ${
                 ready ? "hover:bg-white/30" : "cursor-default opacity-45"
               }`}
             >
@@ -424,7 +424,7 @@ export default function TarotUI() {
   if (phase === "shuffle")
     return (
       <div className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center pb-28">
-        <div className="pixel hud-shadow blink-soft text-[13px] text-[#ff4fd8]">
+        <div className="pixel hud-shadow blink-soft text-[14px] text-[#ff4fd8]">
           shuffling full 78-card deck… focus your intention
         </div>
       </div>

@@ -110,7 +110,8 @@ ${lore.entries.map((e) => `- [${e.id}] ${e.who}: ${e.text}`).join("\n")}`
 
   const replyBlock = reply
     ? `THE PLAYER JUST TAPPED THIS REPLY: "${reply}"
-The first 1 or 2 lines must react to it directly, then the conversation moves on. One of them should be pleased, unconcerned or irritated by it — never simply agree.`
+All three have turned to face the player. The first 3 or 4 lines happen WITH the player: react to that reply directly, pick it apart or push back on it — at least two of them address the player as "you". One of them should be pleased, unconcerned or irritated by it — never simply agree.
+The last 2 or 3 lines drift back to them talking among themselves again (the final line may still toss one thing back to the player).`
     : "";
 
   const recentBlock = recent.length ? `RECENT TOPICS — do not reopen these: ${recent.join(" | ")}` : "";

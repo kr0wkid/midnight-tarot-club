@@ -31,17 +31,17 @@ import { audio } from "./audio";
 import { CURB_H, FRONT_Z } from "./world";
 
 /** wide establishing shot before you "arrive" */
-const INTRO = { radius: 11.6, polar: 1.3, az: 0.32, ty: 1.9 };
+const INTRO = { radius: 10.5, polar: 1.3, az: 0.32, ty: 1.9 };
 
 function CameraRig() {
   const { camera, gl, size } = useThree();
   const state = useRef({
     azimuth: 0,
     polar: 1.39,
-    radius: 4.6,
+    radius: 4.1,
     tAz: 0,
     tPolar: 1.39,
-    tRadius: 4.6,
+    tRadius: 4.1,
     radiusScale: 1,
     dragging: false,
     px: 0,

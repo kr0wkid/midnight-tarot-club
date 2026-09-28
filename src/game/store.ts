@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { AFTER, GREET, IGNORED, nextAmbientLine, sceneJustEnded, SHUFFLE_LINE, SPREAD_LINE, TOPIC_LINES, VERDICT_LEAD, type GirlId } from "./dialogue";
+import { AFTER, ANSWER_BEATS, DECLINE_LINES, GREET, GIRLS, IGNORED, nextAmbientLine, sceneJustEnded, SHUFFLE_LINE, SPREAD_LINE, TOPIC_LINES, VERDICT_LEAD, type GirlId } from "./dialogue";
 import { buildSpread, POSITIONS, type DrawnCard, type TopicId } from "./tarot";
 import { audio } from "./audio";
 import { ensureLore, getVerdict, nextPacket, noteReply } from "./director";
@@ -38,6 +38,8 @@ type GameState = {
   packetQ: Packet[];
   /** buttons offered at the end of a generated exchange */
   choices: string[] | null;
+  /** until this time they face the player instead of each other */
+  addressUntil: number;
   verdict: VerdictState;
 
   start: () => void;
@@ -58,6 +60,7 @@ type GameState = {
   nextReveal: () => void;
   pullAgain: () => void;
   hang: () => void;
+  declineReading: () => void;
   answerChoice: (text: string) => void;
 };
 
@@ -78,6 +81,8 @@ let toldDown = false;
 /** handwritten lines played since the last generated exchange */
 let scriptedSincePacket = 0;
 let choiceTimer: number | undefined;
+/** beats that address the player right after they answer — drained before anything else */
+let playerQ: { who: GirlId; text: string }[] = [];
 
 function sayOffline() {
   if (toldDown) return;
@@ -93,8 +98,15 @@ function pullPacket(reply?: string) {
   queuedReply = null;
   void nextPacket(wanted ? { reply: wanted } : {}).then((packet) => {
     fetching = false;
-    if (packet) useGame.getState().enqueuePacket(packet);
-    else sayOffline();
+    if (packet) {
+      useGame.getState().enqueuePacket(packet);
+      // their attention stays on the player while the reply plays out
+      if (wanted) useGame.setState((s) => ({ addressUntil: Math.max(s.addressUntil, Date.now() + 24_000) }));
+    } else {
+      sayOffline();
+      // nothing is coming — don't leave them staring at the player forever
+      useGame.setState((s) => ({ addressUntil: Math.min(s.addressUntil, Date.now() + 3_000) }));
+    }
     if (queuedReply) pullPacket();
   });
 }
@@ -133,6 +145,7 @@ export const useGame = create<GameState>((set, get) => ({
   toasts: [],
   packetQ: [],
   choices: null,
+  addressUntil: 0,
   verdict: { status: "idle" },
 
   start: () => {
@@ -168,6 +181,13 @@ export const useGame = create<GameState>((set, get) => ({
     // they asked the player something — nobody talks until it's answered or dropped
     if (choices) return false;
 
+    // an answer just landed: face the player and pick at it before anything else
+    if (playerQ.length > 0) {
+      const b = playerQ.shift()!;
+      set({ line: mkLine(b.who, b.text), lineAt: Date.now(), addressUntil: Math.max(get().addressUntil, Date.now() + 8_000) });
+      return true;
+    }
+
     if (phase === "after" && get().afterIdx < AFTER.length) {
       const l = AFTER[get().afterIdx];
       set({ line: mkLine(l.who, l.text), lineAt: Date.now(), afterIdx: get().afterIdx + 1 });
@@ -179,12 +199,14 @@ export const useGame = create<GameState>((set, get) => ({
     if (packetQ.length > 0) {
       const [current, ...rest] = packetQ;
       const [line, ...tail] = current.lines;
+      // while they're still working your answer, every line keeps them facing you
+      const keepAttention = Date.now() < get().addressUntil ? { addressUntil: Date.now() + 8_000 } : {};
       if (tail.length > 0) {
-        set({ packetQ: [{ ...current, lines: tail }, ...rest], line: mkLine(line.who, line.text), lineAt: Date.now() });
+        set({ packetQ: [{ ...current, lines: tail }, ...rest], line: mkLine(line.who, line.text), lineAt: Date.now(), ...keepAttention });
       } else {
         // last line of the exchange — put their question to the player
         scriptedSincePacket = 0;
-        set({ packetQ: rest, line: mkLine(line.who, line.text), lineAt: Date.now() });
+        set({ packetQ: rest, line: mkLine(line.who, line.text), lineAt: Date.now(), ...keepAttention });
         if (current.choices.length) setChoices(current.choices);
       }
       return true;
@@ -205,7 +227,8 @@ export const useGame = create<GameState>((set, get) => ({
     if (phase !== "ambient" && phase !== "after") return;
     window.clearTimeout(readingTimer);
     if (get().choices) setChoices(null);
-    set({ phase: "talk", talkStep: 0, topic: null, picked: [], revealIdx: 0, line: mkLine(GREET[0].who, GREET[0].text), lineAt: Date.now() });
+    playerQ = [];
+    set({ phase: "talk", talkStep: 0, topic: null, picked: [], revealIdx: 0, addressUntil: 0, line: mkLine(GREET[0].who, GREET[0].text), lineAt: Date.now() });
   },
 
   advanceTalk: () => {
@@ -330,11 +353,30 @@ export const useGame = create<GameState>((set, get) => ({
     set({ phase: "after", afterIdx: 0, picked: [], revealIdx: 0, verdict: { status: "idle" }, line: mkLine(AFTER[0].who, AFTER[0].text), lineAt: Date.now() });
   },
 
+  declineReading: () => {
+    const { phase, talkStep, topic } = get();
+    if (phase !== "talk" || talkStep !== 3 || topic) return;
+    audio.blip(520, 0.08, 0.1);
+    const l = DECLINE_LINES[(Math.random() * DECLINE_LINES.length) | 0];
+    playerQ = [];
+    set({ phase: "ambient", talkStep: 4, addressUntil: 0, line: mkLine(l.who, l.text), lineAt: Date.now() });
+  },
+
   answerChoice: (text) => {
     if (!get().choices) return;
     audio.blip(660, 0.09, 0.12);
     noteReply(text);
     setChoices(null);
+    // instant feedback: they swing around to face you — one line now, a beat queued,
+    // then the generated reply lands while you still have their attention
+    const first = (Math.random() * ANSWER_BEATS.length) | 0;
+    let second = (Math.random() * ANSWER_BEATS.length) | 0;
+    if (second === first) second = (second + 1) % ANSWER_BEATS.length;
+    set({ addressUntil: Date.now() + 20_000 });
+    const b = ANSWER_BEATS[first];
+    get().sayAs(b.who, b.text);
+    audio.say(GIRLS[b.who].pitch, b.text.length / 6);
+    playerQ.push({ who: ANSWER_BEATS[second].who, text: ANSWER_BEATS[second].text });
     // they answer straight away — queue it so the reply lands within a line or two
     pullPacket(text);
   },
