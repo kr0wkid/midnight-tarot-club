@@ -218,7 +218,15 @@ function extractJson(text: string): unknown {
    the whole field drops, json mode is dropped and we go once more,
    always inside a budget the browser is still waiting for (23s for the
    bible, 25s for a packet or a verdict). */
-const FALLBACKS = ["gemini-flash-latest", "gemini-3.6-flash", "gemini-3.1-flash-lite"];
+const FALLBACKS = [
+  "gemini-flash-latest",
+  "gemini-3.6-flash",
+  "gemini-3.1-flash-lite",
+  "gemini-3.7-flash",
+  "gemini-3.5-flash",
+  "gemini-flash-lite-latest",
+  "gemini-3.5-flash-lite",
+];
 const BUDGET_MS = 18_000;
 /* the bible is ~1600 tokens of json — 2048 leaves no room for a
    verbose night, and a cut-off object fails validation outright */
