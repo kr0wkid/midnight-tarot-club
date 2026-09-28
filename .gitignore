@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.vercel/
+
+# secrets — never commit these
+.env
+.env.local
+.env.*.local
+
+# editor / os
+.DS_Store
+*.log
+.vscode/
+.idea/
