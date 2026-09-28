@@ -7,7 +7,7 @@ import type { LoreBible, LoreEntry, LoreTag, Packet, Sky, VerdictOut } from "./t
 /*  — so a mangled or hostile response can never break the scene.      */
 /* ------------------------------------------------------------------ */
 
-const GIRDS: GirlId[] = ["anya", "mila", "kira"];
+const GIRDS: GirlId[] = ["jetta", "emi", "cole"];
 const TAGS: LoreTag[] = [
   "school",
   "home",
@@ -62,9 +62,9 @@ export function sanitizeLore(raw: unknown): LoreBible | null {
   const tonight = clean(rec.tonight, 300);
   const entries = [
     ...asEntries(rec.shared, "shared", 6),
-    ...asEntries(rec.anya, "anya", 8),
-    ...asEntries(rec.mila, "mila", 8),
-    ...asEntries(rec.kira, "kira", 8),
+    ...asEntries(rec.jetta, "jetta", 8),
+    ...asEntries(rec.emi, "emi", 8),
+    ...asEntries(rec.cole, "cole", 8),
   ];
   if (entries.length < 6 || !tonight) return null;
   return { v: 1, createdAt: Date.now(), tonight, entries };

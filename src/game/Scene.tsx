@@ -25,23 +25,23 @@ import {
 } from "./Environment";
 import { TagsLayer } from "./Graffiti";
 import { Puff } from "./Particles";
-import { justStarted, useGame } from "./store";
+import { justStarted, revealReady, useGame } from "./store";
 import { GIRLS, sceneJustEnded } from "./dialogue";
 import { audio } from "./audio";
 import { CURB_H, FRONT_Z } from "./world";
 
 /** wide establishing shot before you "arrive" */
-const INTRO = { radius: 13.5, polar: 1.3, az: 0.32, ty: 1.9 };
+const INTRO = { radius: 11.6, polar: 1.3, az: 0.32, ty: 1.9 };
 
 function CameraRig() {
   const { camera, gl, size } = useThree();
   const state = useRef({
     azimuth: 0,
     polar: 1.39,
-    radius: 5.2,
+    radius: 4.6,
     tAz: 0,
     tPolar: 1.39,
-    tRadius: 5.2,
+    tRadius: 4.6,
     radiusScale: 1,
     dragging: false,
     px: 0,
@@ -192,7 +192,10 @@ function Interactions() {
         else if (g.phase === "talk") {
           if (g.talkStep === 3 && !g.topic) return; // must pick a topic
           g.advanceTalk();
-        } else if (g.phase === "reading") g.nextReveal();
+        } else if (g.phase === "reading") {
+          // each card gets its beat — mashing E/space can't run through the spread
+          if (revealReady()) g.nextReveal();
+        }
       }
     };
     window.addEventListener("keydown", down);
@@ -229,7 +232,7 @@ export default function Scene() {
       <NeighborBuilding />
       <StreetLamp />
 
-      {/* glowing drink machine against the garage wall, behind kira */}
+      {/* glowing drink machine against the garage wall, behind cole */}
       <VendingMachine position={[1.75, CURB_H, FRONT_Z + 0.38]} />
 
       <Dumpster position={[4.2, CURB_H, -2.42]} rotation={0.1} />

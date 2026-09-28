@@ -58,7 +58,7 @@ export default function App() {
         shadows
         dpr={0.55}
         gl={{ antialias: false, powerPreference: "high-performance" }}
-        camera={{ fov: 50, near: 0.1, far: 160, position: [3, 5, 14] }}
+        camera={{ fov: 50, near: 0.1, far: 160, position: [2.6, 4.4, 12.2] }}
         onCreated={({ gl }) => {
           gl.toneMapping = THREE.ACESFilmicToneMapping;
           gl.toneMappingExposure = 1.12;

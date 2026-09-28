@@ -36,7 +36,7 @@ export function ensureLore(): Promise<LoreBible | null> {
   loreInFlight = (async () => {
     try {
       const req: GenRequest = { action: "lore", sky: getSky() };
-      const data = await generate<unknown>(req);
+      const data = await generate<unknown>(req, 23000); // server budgets 18s for this one
       const bible = data ? sanitizeLore(data) : null;
       if (bible) saveLore(bible);
       return bible;
@@ -87,7 +87,7 @@ export function buildCardBriefs(picked: DrawnCard[]): CardBrief[] {
   }));
 }
 
-/** the synthesis of all three cards, in Anya's voice */
+/** the synthesis of all three cards, in Jetta's voice */
 export async function getVerdict(
   picked: DrawnCard[],
   topic: TopicId | null

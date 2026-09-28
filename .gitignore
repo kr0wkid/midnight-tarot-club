@@ -2,10 +2,10 @@ node_modules/
 dist/
 .vercel/
 
-# secrets — never commit these
+# secrets - never commit these
 .env
-.env.local
-.env.*.local
+.env.*
+!.env.example
 
 # editor / os
 .DS_Store

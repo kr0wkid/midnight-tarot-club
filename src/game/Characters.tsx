@@ -10,9 +10,9 @@ import * as T from "./animeTex";
 
 /** a loose standing chat circle, open toward the viewer */
 export const GIRL_SPOTS: Record<GirlId, { pos: [number, number, number]; rot: number }> = {
-  anya: { pos: [-0.05, 0, -0.2], rot: 0.05 },
-  mila: { pos: [-1.12, 0, 0.62], rot: 0.95 },
-  kira: { pos: [1.08, 0, 0.64], rot: -0.95 },
+  jetta: { pos: [-0.05, 0, -0.2], rot: 0.05 },
+  emi: { pos: [-1.12, 0, 0.62], rot: 0.95 },
+  cole: { pos: [1.08, 0, 0.64], rot: -0.95 },
 };
 
 type V3 = [number, number, number];
@@ -46,7 +46,7 @@ interface Look {
 /* ------------------------------------------------------------------ */
 const LOOKS: Record<GirlId, Look> = {
   // tan · long messy red hair · headphones · star cami · cargo mini + skull belt · combat boots
-  anya: {
+  jetta: {
     seed: 11,
     face: { skin: "#c68a60", hair: "#a3242c", eye: "#e2a33c", blush: "#a8433f", eyeStyle: "sleepy", mouth: "grin", mark: "mole" },
     hair: { hair: "#a3242c", bang: "messy", bangLen: 36, sideLen: 62, backLen: 64 },
@@ -64,7 +64,7 @@ const LOOKS: Record<GirlId, Look> = {
     hatAccent: "#c8323c",
   },
   // light · black bob w/ yellow underlayer · green cat beanie + braids · #99 jersey · hoop shorts · slouch socks
-  mila: {
+  emi: {
     seed: 23,
     face: { skin: "#f6dccb", hair: "#18161f", eye: "#3a7cff", blush: "#ff8aa0", eyeStyle: "sparkle", mouth: "fang", mark: "sticker" },
     hair: { hair: "#18161f", under: "#ffd84a", bang: "blunt", bangLen: 38, sideLen: 50, backLen: 47 },
@@ -85,7 +85,7 @@ const LOOKS: Record<GirlId, Look> = {
     wristband: "#39d0d8",
   },
   // deep brown · messy blue hair · camo cap · striped bikini · navy track pants · red sneakers · lollipop
-  kira: {
+  cole: {
     seed: 37,
     face: { skin: "#8a5337", hair: "#2f7fe0", eye: "#e8323c", blush: "#a8423e", eyeStyle: "sharp", mouth: "smirk", mark: "bandaid" },
     hair: { hair: "#2f7fe0", bang: "spiky", bangLen: 35, sideLen: 50, backLen: 46 },
@@ -108,14 +108,14 @@ const LOOKS: Record<GirlId, Look> = {
 /*  materials: lit by the lamp + candles, with a little emissive so    */
 /*  the pixel art still reads in the dark. PS1 vertex snapping on.     */
 /* ------------------------------------------------------------------ */
-const EMI = 0.22;
+const EMISSIVE = 0.22;
 function lit(map: THREE.Texture, extra: THREE.MeshLambertMaterialParameters = {}) {
   return ps1(
     new THREE.MeshLambertMaterial({
       map,
       emissive: new THREE.Color("#ffffff"),
       emissiveMap: map,
-      emissiveIntensity: EMI,
+      emissiveIntensity: EMISSIVE,
       side: THREE.DoubleSide,
       ...extra,
     }),
@@ -124,7 +124,7 @@ function lit(map: THREE.Texture, extra: THREE.MeshLambertMaterialParameters = {}
 }
 function flat(color: string) {
   return ps1(
-    new THREE.MeshLambertMaterial({ color, emissive: new THREE.Color(color), emissiveIntensity: EMI, side: THREE.DoubleSide }),
+    new THREE.MeshLambertMaterial({ color, emissive: new THREE.Color(color), emissiveIntensity: EMISSIVE, side: THREE.DoubleSide }),
     240
   );
 }
@@ -341,7 +341,7 @@ function Shoe({ s, kind, M, shaft }: { s: number; kind: Shoes; M: Mats; shaft: T
 /* ------------------------------------------------------------------ */
 const HEAD_Y = 1.36;
 const HIP_Y = 0.66;
-const OTHERS: Record<GirlId, GirlId[]> = { anya: ["mila", "kira"], mila: ["anya", "kira"], kira: ["anya", "mila"] };
+const OTHERS: Record<GirlId, GirlId[]> = { jetta: ["emi", "cole"], emi: ["jetta", "cole"], cole: ["jetta", "emi"] };
 const LAUGHY = /!!|omg|lol|haha|😂|\?\?|insane|DRAMA|screaming/i;
 
 const wrap = (a: number) => {
@@ -369,8 +369,8 @@ function Girl({ id }: { id: GirlId }) {
 
   const S = useRef({
     lastKey: -1,
-    prevWho: "anya" as GirlId,
-    curWho: "anya" as GirlId,
+    prevWho: "jetta" as GirlId,
+    curWho: "jetta" as GirlId,
     addressee: OTHERS[id][0],
     glanceNext: rand(2, 4),
     glanceAlt: false,
@@ -426,7 +426,7 @@ function Girl({ id }: { id: GirlId }) {
       } else {
         if (LAUGHY.test(line.text) && Math.random() < 0.55) s.laugh = 1;
         else if (Math.random() < 0.5) s.nodAt = t + rand(0.5, 1.8);
-        s.phoneLook = id === "mila" && !engaged && Math.random() < 0.18;
+        s.phoneLook = id === "emi" && !engaged && Math.random() < 0.18;
       }
     }
 
@@ -435,7 +435,7 @@ function Girl({ id }: { id: GirlId }) {
       s.glanceAlt = Math.random() < (speaking ? 0.4 : 0.28);
       s.glanceNext = t + (s.glanceAlt ? rand(0.9, 1.8) : rand(2.4, 5));
       s.tilt = rand(-0.08, 0.08);
-      if (id === "mila" && !talking && !engaged) s.phoneLook = Math.random() < 0.45;
+      if (id === "emi" && !talking && !engaged) s.phoneLook = Math.random() < 0.45;
     }
 
     /* ---- choose where to look ---- */
@@ -445,7 +445,7 @@ function Girl({ id }: { id: GirlId }) {
       if (speaking) tgt.copy(cam);
       else if (talking && line.who !== id) (s.glanceAlt ? tgt.copy(cam) : headOf(line.who, tgt));
       else tgt.copy(cam);
-      if (id === "anya" && phase === "shuffle") lookDown = 0.45; // watching her hands
+      if (id === "jetta" && phase === "shuffle") lookDown = 0.45; // watching her hands
     } else if (speaking) {
       headOf(s.glanceAlt ? OTHERS[id].find((o) => o !== s.addressee)! : s.addressee, tgt);
     } else if (talking) {
@@ -514,7 +514,7 @@ function Girl({ id }: { id: GirlId }) {
     const drift = Math.sin(t * 0.6 + off) * 0.03;
     let ulx = 0.05 + drift, ulz = -0.1, urx = 0.05 - drift, urz = 0.1, fl = -0.25, fr = -0.25;
 
-    if (id === "anya") {
+    if (id === "jetta") {
       // holds her deck loosely at the waist
       urx = -0.22 + drift; urz = 0.12; fr = -1.05;
       ulx = 0.06; ulz = -0.14; fl = -0.35;
@@ -529,7 +529,7 @@ function Girl({ id }: { id: GirlId }) {
         urx = -0.3 + g1 * 0.1; fr = -1.15 + g2 * 0.2;
         ulx = -0.12 + g2 * 0.12; ulz = -0.18; fl = -0.7 + g1 * 0.3;
       }
-    } else if (id === "mila") {
+    } else if (id === "emi") {
       // phone at chest; free hand does the talking
       urx = -0.18; urz = 0.08; fr = s.phoneLook ? -1.45 : -1.2;
       ulx = 0.04 + drift; ulz = -0.12; fl = -0.3;
@@ -624,8 +624,8 @@ function Girl({ id }: { id: GirlId }) {
             <cylinderGeometry args={[0.026, 0.03, 0.12, 7]} />
           </mesh>
 
-          {/* anya: tamagotchi on a cord */}
-          {id === "anya" && (
+          {/* jetta: tamagotchi on a cord */}
+          {id === "jetta" && (
             <>
               <Rod a={[-0.045, 1.14, 0.065]} b={[0, 0.985, 0.105]} r={0.004} material={M.black} />
               <Rod a={[0.045, 1.14, 0.065]} b={[0, 0.985, 0.105]} r={0.004} material={M.black} />
@@ -638,8 +638,8 @@ function Girl({ id }: { id: GirlId }) {
             </>
           )}
 
-          {/* mila: crossbody bag */}
-          {id === "mila" && (
+          {/* emi: crossbody bag */}
+          {id === "emi" && (
             <>
               <Rod a={[0.1, 1.1, 0.085]} b={[-0.12, 0.8, 0.095]} r={0.008} material={M.black} />
               <mesh position={[-0.17, 0.75, 0.05]} rotation-y={0.5} material={M.black} castShadow>
@@ -662,8 +662,8 @@ function Girl({ id }: { id: GirlId }) {
                   <sphereGeometry args={[0.032, 7, 5]} />
                 </mesh>
 
-                {/* anya: spiked wristband + her tarot deck */}
-                {id === "anya" && s === 1 && (
+                {/* jetta: spiked wristband + her tarot deck */}
+                {id === "jetta" && s === 1 && (
                   <>
                     <group position={[0, -0.19, 0]}>
                       <mesh rotation-x={Math.PI / 2} material={M.black}>
@@ -683,8 +683,8 @@ function Girl({ id }: { id: GirlId }) {
                   </>
                 )}
 
-                {/* mila: sad-cat phone */}
-                {id === "mila" && s === 1 && (
+                {/* emi: sad-cat phone */}
+                {id === "emi" && s === 1 && (
                   <group position={[0, -0.28, 0.02]} rotation-x={-Math.PI / 2}>
                     <mesh material={M.phoneCase} castShadow>
                       <boxGeometry args={[0.07, 0.12, 0.016]} />
@@ -711,8 +711,8 @@ function Girl({ id }: { id: GirlId }) {
             <mesh geometry={G.head} material={M.face} castShadow />
             <mesh position={[0, 0.012, -0.004]} geometry={G.shell} material={M.shell} castShadow />
 
-            {/* ANYA — long messy red hair + headphones */}
-            {id === "anya" && M.curtain && (
+            {/* JETTA — long messy red hair + headphones */}
+            {id === "jetta" && M.curtain && (
               <>
                 <group ref={curtain}>
                   <mesh geometry={G.curtain} material={M.curtain} castShadow />
@@ -744,29 +744,31 @@ function Girl({ id }: { id: GirlId }) {
               </>
             )}
 
-            {/* MILA — OVERSIZED slouchy cat-ear beanie with chunky braided tassels */}
-            {id === "mila" && (
-              <group position={[0, 0.1, -0.015]} rotation-x={-0.12} scale={[1.24, 1.42, 1.24]}>
+            {/* EMI — OVERSIZED slouchy cat-ear beanie with chunky braided tassels */}
+            {id === "emi" && (
+              // sized to the skull, not floated above it: the rim lands on the
+              // forehead and the brim band hugs the hair instead of flaring off it
+              <group position={[0, 0.035, -0.012]} rotation-x={-0.11}>
                 <mesh geometry={G.beanie} material={M.hat} castShadow />
-                {/* folded ribbed brim, tucking in toward the head */}
-                <mesh position={[0, -0.012, 0]} material={M.hatAccent} castShadow>
-                  <cylinderGeometry args={[0.236, 0.17, 0.05, 12, 1, true]} />
+                {/* folded ribbed brim, wrapping the head */}
+                <mesh position={[0, -0.008, 0]} material={M.hatAccent} castShadow>
+                  <cylinderGeometry args={[0.242, 0.226, 0.058, 12, 1, true]} />
                 </mesh>
                 {/* big floppy cat ears */}
                 {[-1, 1].map((s) => (
                   <mesh key={`ear${s}`} position={[s * 0.13, 0.19, -0.01]} rotation-z={-s * 0.42} material={M.hat} castShadow>
-                    <coneGeometry args={[0.085, 0.15, 4]} />
+                    <coneGeometry args={[0.1, 0.17, 4]} />
                   </mesh>
                 ))}
                 {/* ear flaps */}
                 {[-1, 1].map((s) => (
-                  <mesh key={`flap${s}`} position={[s * 0.19, -0.075, 0.0]} scale={[0.42, 1, 0.9]} material={M.hat} castShadow>
+                  <mesh key={`flap${s}`} position={[s * 0.216, -0.06, 0.0]} scale={[0.42, 1, 0.9]} material={M.hat} castShadow>
                     <sphereGeometry args={[0.07, 7, 6]} />
                   </mesh>
                 ))}
                 {/* braided tassels */}
                 {[-1, 1].map((s) => (
-                  <group key={`br${s}`} ref={s < 0 ? braidL : braidR} position={[s * 0.195, -0.13, 0.0]}>
+                  <group key={`br${s}`} ref={s < 0 ? braidL : braidR} position={[s * 0.205, -0.13, 0.0]}>
                     {[0, 1, 2, 3, 4, 5, 6].map((i) => (
                       <mesh key={i} position={[(i % 2 ? 1 : -1) * 0.007, -i * 0.03, 0]} material={i % 2 ? M.hat : M.hatAccent} castShadow>
                         <sphereGeometry args={[0.02, 6, 5]} />
@@ -783,8 +785,8 @@ function Girl({ id }: { id: GirlId }) {
               </group>
             )}
 
-            {/* KIRA — camo cap, messy spiky blue hair, lollipop */}
-            {id === "kira" && (
+            {/* COLE — camo cap, messy spiky blue hair, lollipop */}
+            {id === "cole" && (
               <>
                 <group rotation-x={-0.12}>
                   <mesh geometry={G.cap} material={M.hat} castShadow />
@@ -823,9 +825,9 @@ function Girl({ id }: { id: GirlId }) {
 export function Girls() {
   return (
     <group>
-      <Girl id="anya" />
-      <Girl id="mila" />
-      <Girl id="kira" />
+      <Girl id="jetta" />
+      <Girl id="emi" />
+      <Girl id="cole" />
     </group>
   );
 }

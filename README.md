@@ -1,7 +1,7 @@
 # ★ midnight tarot club ★
 
-three girls, one streetlight, 02:06 am. a little PS1-flavoured 3D night scene where anya,
-mila and kira hang out under a sodium lamp outside a boarded-up garage and talk about
+three girls, one streetlight, 02:06 am. a little PS1-flavoured 3D night scene where jetta,
+emi and cole hang out under a sodium lamp outside a boarded-up garage and talk about
 astrology, wicca, tarot and each other — until you walk over and ask for a reading.
 
 built with **react · three.js · @react-three/fiber · tailwind · zustand**, shipped as a
@@ -26,7 +26,7 @@ the scene runs entirely on a handwritten script in `src/game/dialogue.ts`. Gemin
   and everything they say afterwards is built on it.
 - **scene packets** — on refresh and a few times mid-session, one of them picks a subject and
   the three of them argue about it. about a third of the time it ends with buttons for you.
-- **final verdict** — when the third card lands, anya synthesises all three cards live.
+- **final verdict** — when the third card lands, jetta synthesises all three cards live.
 
 no key in the browser, no typing, no waiting: the key lives in `api/generate.ts` (a Vercel
 function), every response is validated twice, and if the endpoint is down you get a toast and

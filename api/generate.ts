@@ -5,13 +5,13 @@ import {
   SETTING,
   STYLE_RULES,
   VOICE_CARDS,
-} from "../src/game/voices";
+} from "../src/game/voices.js";
 import {
   sanitizeLore,
   sanitizePacket,
   sanitizeSky,
   sanitizeVerdict,
-} from "../src/game/validate";
+} from "../src/game/validate.js";
 import type { CardBrief, GenRequest, LoreBible, Packet, VerdictOut } from "../src/game/types";
 
 /* ------------------------------------------------------------------ */
@@ -73,18 +73,18 @@ function lorePrompt(sky: ReturnType<typeof sanitizeSky>): string {
 ${SKY_LINE(sky)}
 
 THE CHARACTERS
-${VOICE_CARDS.anya}
+${VOICE_CARDS.jetta}
 
-${VOICE_CARDS.mila}
+${VOICE_CARDS.emi}
 
-${VOICE_CARDS.kira}
+${VOICE_CARDS.cole}
 
 CANON — established already, never contradict any of it:
 ${CANON.map((c) => `- ${c}`).join("\n")}
 
 WRITE:
 - "shared": 4-6 entries about the group together — how they met, where the hideout came from, an in-joke, a rule they hold each other to.
-- "anya", "mila", "kira": 6-7 entries each, drawn from her actual life: things happening at school, at home, on the street, with siblings, from childhood, a competition or audition or tryout, friendships, a part-time job, a crush, something she's hiding. entries must fit her voice card above.
+- "jetta", "emi", "cole": 6-7 entries each, drawn from her actual life: things happening at school, at home, on the street, with siblings, from childhood, a competition or audition or tryout, friendships, a part-time job, a crush, something she's hiding. entries must fit her voice card above.
 - at least one entry per girl is unresolved — still in motion as of tonight.
 - be concrete and specific, the way real teenage girls gossip: names, places, small humiliations, small wins. not archetypes, not a character sheet.
 - text is 30-70 words, written in the lowercase, wry register of the show.
@@ -93,7 +93,7 @@ WRITE:
 - "tonight": one sentence (15-30 words) about what specifically hangs over tonight for all three of them.
 
 ${JSON_RULE}
-shape: {"tonight":"...","shared":[{"id":"...","tags":["school"],"text":"..."}],"anya":[...],"mila":[...],"kira":[...]}`;
+shape: {"tonight":"...","shared":[{"id":"...","tags":["school"],"text":"..."}],"jetta":[...],"emi":[...],"cole":[...]}`;
 }
 
 function packetPrompt(
@@ -144,8 +144,8 @@ HANDWRITTEN EXAMPLES — match this rhythm:
 ${examplesBlock(4)}
 
 ${JSON_RULE}
-shape: {"topic":"...","loreIds":["entry-id"],"lines":[{"who":"anya","text":"..."}],"choices":[]}
-who must be exactly one of: anya, mila, kira.`;
+shape: {"topic":"...","loreIds":["entry-id"],"lines":[{"who":"jetta","text":"..."}],"choices":[]}
+who must be exactly one of: jetta, emi, cole.`;
 }
 
 function verdictPrompt(
@@ -156,11 +156,11 @@ function verdictPrompt(
   const list = cards
     .map(
       (c) =>
-        `- ${c.position}: ${c.name} (${c.orientation}, ${c.element}, ${c.arcana}) — anya's written meaning: "${c.meaning}"`
+        `- ${c.position}: ${c.name} (${c.orientation}, ${c.element}, ${c.arcana}) — jetta's written meaning: "${c.meaning}"`
     )
     .join("\n");
 
-  return `Anya has just laid three cards in front of the player. Mila and Kira are watching. Write her final synthesis of the spread.
+  return `Jetta has just laid three cards in front of the player. Emi and Cole are watching. Write her final synthesis of the spread.
 
 ${SKY_LINE(sky)}
 
@@ -169,14 +169,14 @@ THE PLAYER CAME WITH: ${topic ? `"${topic}"` : "no question — they just asked 
 THE THREE CARDS
 ${list}
 
-ANYA
-${VOICE_CARDS.anya}
+JETTA
+${VOICE_CARDS.jetta}
 
 ${STYLE_RULES}
 
 RULES
 - title: 2-5 lowercase words, plain text, no symbols, no quotes, no star characters.
-- text: 45-95 words. one continuous paragraph in Anya's voice.
+- text: 45-95 words. one continuous paragraph in Jetta's voice.
 - weave ALL THREE cards AND their positions (past / present / destiny) into one reading — not three separate mini-readings.
 - a reversed card reads as the meaning turned inward or blocked; say that without being grim.
 - answer the player's actual question if there was one.
@@ -211,38 +211,90 @@ function extractJson(text: string): unknown {
   }
 }
 
-async function callGemini(system: string, user: string, key: string): Promise<unknown | null> {
-  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`;
+/* Google's flash tiers answer 503 "high demand" often, and taking them
+   one at a time loses the game its window — so the models are raced
+   in parallel and the first usable answer wins. Losers get aborted; if
+   the whole field drops, json mode is dropped and we go once more,
+   always inside a budget the browser is still waiting for (23s for the
+   bible, 25s for a packet or a verdict). */
+const FALLBACKS = ["gemini-flash-latest", "gemini-3.6-flash", "gemini-3.1-flash-lite"];
+const BUDGET_MS = 18_000;
+/* the bible is ~1600 tokens of json — 2048 leaves no room for a
+   verbose night, and a cut-off object fails validation outright */
+const LORE_TOKENS = 3072;
 
-  const build = (jsonMode: boolean) =>
+async function callGemini(system: string, user: string, key: string, maxTokens = 2048): Promise<unknown | null> {
+  const models = [MODEL, ...FALLBACKS.filter((m) => m !== MODEL)];
+  const deadline = Date.now() + BUDGET_MS;
+  const payload = (jsonMode: boolean) =>
     JSON.stringify({
       systemInstruction: { parts: [{ text: system }] },
       contents: [{ role: "user", parts: [{ text: user }] }],
       generationConfig: {
         temperature: 1.05,
-        maxOutputTokens: 2048,
+        maxOutputTokens: maxTokens,
         ...(jsonMode ? { responseMimeType: "application/json" } : {}),
       },
     });
 
   for (const jsonMode of [true, false]) {
+    const left = deadline - Date.now();
+    if (left <= 0) break;
+
+    const ctl = new AbortController();
+    const timer = setTimeout(() => ctl.abort(), left);
+    let badKey = false;
+    let settled = false;
+
     try {
-      const res = await fetch(endpoint, {
-        method: "POST",
-        headers: { "content-type": "application/json", "x-goog-api-key": key },
-        body: build(jsonMode),
+      const winner = await new Promise<unknown | null>((resolve) => {
+        let outstanding = models.length;
+        const finish = (value: unknown | null): void => {
+          if (settled) return;
+          settled = true;
+          resolve(value);
+        };
+
+        for (const model of models) {
+          const ask = async (): Promise<unknown | null> => {
+            const res = await fetch(
+              `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
+              {
+                method: "POST",
+                headers: { "content-type": "application/json", "x-goog-api-key": key },
+                body: payload(jsonMode),
+                signal: ctl.signal,
+              },
+            );
+            if (res.status === 401 || res.status === 403) {
+              badKey = true; // wrong key — no model or mode rescues this
+              return null;
+            }
+            if (!res.ok) return null; // 404 / 429 / 5xx — this model's out
+            const data = (await res.json()) as {
+              candidates?: { content?: { parts?: { text?: string }[] } }[];
+            };
+            const parts = data?.candidates?.[0]?.content?.parts ?? [];
+            const text = parts.map((p) => p.text ?? "").join("");
+            const json = text ? extractJson(text) : null;
+            return json && typeof json === "object" ? json : null;
+          };
+
+          ask()
+            .catch(() => null)
+            .then((json) => {
+              outstanding -= 1;
+              if (json) finish(json);
+              else if (outstanding === 0) finish(null);
+            });
+        }
       });
-      if (res.status === 400 && jsonMode) continue; // model rejected json mode — retry plain
-      if (!res.ok) return null;
-      const data = (await res.json()) as {
-        candidates?: { content?: { parts?: { text?: string }[] } }[];
-      };
-      const parts = data?.candidates?.[0]?.content?.parts ?? [];
-      const text = parts.map((p) => p.text ?? "").join("");
-      if (!text) return null;
-      return extractJson(text);
-    } catch {
-      return null;
+
+      if (winner) return winner;
+      if (badKey) return null;
+    } finally {
+      clearTimeout(timer);
+      ctl.abort(); // stop whatever is still generating
     }
   }
   return null;
@@ -254,11 +306,11 @@ const SYSTEM = `You are the dialogue engine for "midnight tarot club", a nocturn
 
 ${SETTING}
 
-${VOICE_CARDS.anya}
+${VOICE_CARDS.jetta}
 
-${VOICE_CARDS.mila}
+${VOICE_CARDS.emi}
 
-${VOICE_CARDS.kira}
+${VOICE_CARDS.cole}
 
 ${STYLE_RULES}
 
@@ -318,7 +370,7 @@ export default async function handler(req: Req, res: Res): Promise<void> {
     return;
   }
 
-  const raw = await callGemini(SYSTEM, user, key);
+  const raw = await callGemini(SYSTEM, user, key, body.action === "lore" ? LORE_TOKENS : undefined);
   if (!raw) {
     res.status(502).json({ ok: false, error: "the model returned nothing usable" });
     return;

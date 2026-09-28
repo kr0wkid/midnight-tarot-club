@@ -5,7 +5,7 @@ import type { LoreBible } from "./types";
 /*  a day later they've had new things happen to them.                 */
 /* ------------------------------------------------------------------ */
 
-const KEY = "mtc.lore.v1";
+const KEY = "mtc.lore.v2";
 export const LORE_TTL = 24 * 60 * 60 * 1000;
 
 export function loadLore(): LoreBible | null {

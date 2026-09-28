@@ -65,6 +65,11 @@ type GameState = {
 export let startedAt = 0;
 export const justStarted = () => Date.now() - startedAt < 450;
 let readingTimer: number | undefined;
+/** each card gets a beat before it can be clicked / mashed past */
+let revealAt = 0;
+const REVEAL_DWELL = 4500;
+/** true once the current card has been on screen long enough to move on */
+export const revealReady = () => Date.now() - revealAt >= REVEAL_DWELL;
 
 /* ---------------- generated dialogue plumbing ---------------- */
 let fetching = false;
@@ -117,7 +122,7 @@ export const useGame = create<GameState>((set, get) => ({
   muted: false,
   clock: 2 * 60 + 6,
   phase: "ambient",
-  line: mkLine("kira", "...and that's why i don't trust anyone who puts ketchup on eggs."),
+  line: mkLine("cole", "...and that's why i don't trust anyone who puts ketchup on eggs."),
   lineAt: Date.now(),
   talkStep: 0,
   topic: null,
@@ -218,7 +223,7 @@ export const useGame = create<GameState>((set, get) => ({
         set({
           phase: "spread",
           spread: buildSpread(7),
-          line: mkLine("anya", SPREAD_LINE),
+          line: mkLine("jetta", SPREAD_LINE),
           lineAt: Date.now(),
         });
       }, 1500);
@@ -231,7 +236,7 @@ export const useGame = create<GameState>((set, get) => ({
     audio.blip(660, 0.09, 0.12);
     set({
       topic: t,
-      line: mkLine("anya", `${TOPIC_LINES[t]} ${SHUFFLE_LINE}`),
+      line: mkLine("jetta", `${TOPIC_LINES[t]} ${SHUFFLE_LINE}`),
       lineAt: Date.now(),
     });
   },
@@ -246,7 +251,7 @@ export const useGame = create<GameState>((set, get) => ({
     const posLabel = POSITIONS[next.length - 1].label;
     set({
       picked: next,
-      line: mkLine("anya", next.length === 3 ? "okay. putting them down. let's see how bad it is." : `${posLabel.toLowerCase()}. ${3 - next.length === 2 ? "two" : "one"} more.`),
+      line: mkLine("jetta", next.length === 3 ? "okay. putting them down. let's see how bad it is." : `${posLabel.toLowerCase()}. ${3 - next.length === 2 ? "two" : "one"} more.`),
       lineAt: Date.now(),
     });
     if (next.length === 3) {
@@ -256,10 +261,11 @@ export const useGame = create<GameState>((set, get) => ({
         if (st.phase !== "spread") return;
         const first = st.picked[0];
         audio.shimmer();
+        revealAt = Date.now();
         set({
           phase: "reading",
           revealIdx: 0,
-          line: mkLine("anya", first.reversed ? first.card.rev : first.card.up),
+          line: mkLine("jetta", first.reversed ? first.card.rev : first.card.up),
           lineAt: Date.now(),
         });
       }, 900);
@@ -276,18 +282,19 @@ export const useGame = create<GameState>((set, get) => ({
   nextReveal: () => {
     const { phase, revealIdx, picked } = get();
     if (phase !== "reading") return;
+    revealAt = Date.now(); // the next card's dwell starts here; inputs check revealReady()
     if (revealIdx < 2) {
       const next = picked[revealIdx + 1];
       audio.flip();
       set({
         revealIdx: revealIdx + 1,
-        line: mkLine("anya", next.reversed ? next.card.rev : next.card.up),
+        line: mkLine("jetta", next.reversed ? next.card.rev : next.card.up),
         lineAt: Date.now(),
       });
     } else if (revealIdx === 2) {
       audio.shimmer();
-      set({ revealIdx: 3, line: mkLine("anya", VERDICT_LEAD), lineAt: Date.now(), verdict: { status: "pending" } });
-      // anya reads all three together — this is the one live call in a reading
+      set({ revealIdx: 3, line: mkLine("jetta", VERDICT_LEAD), lineAt: Date.now(), verdict: { status: "pending" } });
+      // jetta reads all three together — this is the one live call in a reading
       void getVerdict(picked, get().topic).then((v) => {
         set({
           verdict: v
@@ -304,7 +311,7 @@ export const useGame = create<GameState>((set, get) => ({
       picked: [],
       revealIdx: 0,
       verdict: { status: "idle" },
-      line: mkLine("anya", "again? greedy. fine, shuffling."),
+      line: mkLine("jetta", "again? greedy. fine, shuffling."),
       lineAt: Date.now(),
     });
     audio.shuffle();
@@ -313,7 +320,7 @@ export const useGame = create<GameState>((set, get) => ({
       set({
         phase: "spread",
         spread: buildSpread(7),
-        line: mkLine("anya", SPREAD_LINE),
+        line: mkLine("jetta", SPREAD_LINE),
         lineAt: Date.now(),
       });
     }, 1500);

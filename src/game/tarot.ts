@@ -1,6 +1,6 @@
 /* ------------------------------------------------------------------ */
 /*  COMPLETE 78-CARD TAROT DECK (22 Major Arcana + 56 Minor Arcana)   */
-/*  Voiced by Anya (visual-kei occult reader) + Rider-Waite symbolism  */
+/*  Voiced by Jetta (visual-kei occult reader) + Rider-Waite symbolism  */
 /* ------------------------------------------------------------------ */
 
 export type TopicId = "love" | "future" | "vibes";

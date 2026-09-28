@@ -58,8 +58,8 @@ export default function Dialogue() {
         style={compact ? undefined : { borderColor: `${girl.color}55` }}
       >
         {compact ? (
-          <div className="pixel text-[12px] leading-relaxed text-white/85">
-            <span className="mr-2 text-[11px]" style={{ color: girl.color }}>
+          <div className="pixel text-[13px] leading-relaxed text-white/85">
+            <span className="mr-2 text-[12px]" style={{ color: girl.color }}>
               {girl.name}
             </span>
             <span className="opacity-90">{text}</span>
@@ -67,7 +67,7 @@ export default function Dialogue() {
 
             {choices && done && (
               <div className="mt-2 flex flex-col items-start gap-1.5 border-t border-white/10 pt-2">
-                <div className="text-[9px] tracking-widest text-[#e6c8ff]/70">they're waiting on you</div>
+                <div className="text-[10px] tracking-widest text-[#e6c8ff]/70">they're waiting on you</div>
                 <div className="flex flex-wrap gap-2">
                   {choices.map((c) => (
                     <button
@@ -76,7 +76,7 @@ export default function Dialogue() {
                         e.stopPropagation();
                         useGame.getState().answerChoice(c);
                       }}
-                      className="pixel rounded-[3px] border border-[#c77dff]/60 bg-[#c77dff]/15 px-3 py-1.5 text-left text-[12px] text-[#e6c8ff] transition hover:bg-[#c77dff]/35"
+                      className="pixel rounded-[3px] border border-[#c77dff]/60 bg-[#c77dff]/15 px-3 py-1.5 text-left text-[13px] text-[#e6c8ff] transition hover:bg-[#c77dff]/35"
                     >
                       {c}
                     </button>
@@ -89,14 +89,14 @@ export default function Dialogue() {
           <>
             <div className="mb-1 flex items-center gap-2">
               <span
-                className="pixel rounded-[2px] px-1.5 py-0.5 text-[11px] text-black"
+                className="pixel rounded-[2px] px-1.5 py-0.5 text-[12px] text-black"
                 style={{ background: girl.color }}
               >
                 {girl.name}
               </span>
-              <span className="pixel text-[9px] text-white/40">{girl.role}</span>
+              <span className="pixel text-[10px] text-white/40">{girl.role}</span>
             </div>
-            <div className="pixel min-h-[2.6em] text-[13px] leading-relaxed text-white/95">
+            <div className="pixel min-h-[2.6em] text-[14px] leading-relaxed text-white/95">
               {text}
               {!done && <span className="caret">▌</span>}
             </div>
@@ -110,7 +110,7 @@ export default function Dialogue() {
                       e.stopPropagation();
                       useGame.getState().chooseTopic(t.id);
                     }}
-                    className="pixel rounded-[3px] border border-white/25 bg-white/10 px-3 py-1.5 text-[12px] text-white transition hover:bg-white/25"
+                    className="pixel rounded-[3px] border border-white/25 bg-white/10 px-3 py-1.5 text-[13px] text-white transition hover:bg-white/25"
                   >
                     {t.emoji} {t.label}
                   </button>
@@ -123,13 +123,13 @@ export default function Dialogue() {
                   e.stopPropagation();
                   useGame.getState().advanceTalk();
                 }}
-                className="pixel blink-soft mt-2 rounded-[3px] border border-[#c77dff]/60 bg-[#c77dff]/15 px-3 py-1.5 text-[12px] text-[#e6c8ff] transition hover:bg-[#c77dff]/30"
+                className="pixel blink-soft mt-2 rounded-[3px] border border-[#c77dff]/60 bg-[#c77dff]/15 px-3 py-1.5 text-[13px] text-[#e6c8ff] transition hover:bg-[#c77dff]/30"
               >
                 🔮 touch the deck
               </button>
             )}
             {(talkStep < 3 || (talkStep === 3 && topic)) && (
-              <div className="pixel mt-1 text-right text-[10px] text-white/35">
+              <div className="pixel mt-1 text-right text-[11px] text-white/35">
                 {done ? "▼ continue [E]" : "…"}
               </div>
             )}

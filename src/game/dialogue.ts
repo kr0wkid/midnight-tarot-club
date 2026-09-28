@@ -1,19 +1,19 @@
 import type { TopicId } from "./tarot";
 
-export type GirlId = "anya" | "mila" | "kira";
+export type GirlId = "jetta" | "emi" | "cole";
 
 /*
-  ANYA — scorpio. the witch. candles, jars, freezer spells, moon water. reads the cards.
+  JETTA — scorpio. the witch. candles, jars, freezer spells, moon water. reads the cards.
          dry, a little dark, will threaten to hex you, secretly the softest.
-  MILA — gemini. the astrology girl. knows everyone's big three, blames everything on
+  EMI — gemini. the astrology girl. knows everyone's big three, blames everything on
          placements. loud, gossipy, first to be nice, first to judge your sign.
-  KIRA — capricorn (cancer moon, hates that). "doesn't believe in any of it", keeps a
+  COLE — capricorn (cancer moon, hates that). "doesn't believe in any of it", keeps a
          dream journal, counts numbers on everything. deadpan and the meanest.
 */
 export const GIRLS: Record<GirlId, { name: string; color: string; pitch: number; role: string }> = {
-  anya: { name: "ANYA", color: "#ff5c6a", pitch: 420, role: "scorpio · candle witch · reads the cards" },
-  mila: { name: "MILA", color: "#a6e94a", pitch: 740, role: "gemini · knows your big three already" },
-  kira: { name: "KIRA", color: "#4f9bff", pitch: 540, role: "capricorn · dreams & numbers · 'doesn't believe it'" },
+  jetta: { name: "JETTA", color: "#ff5c6a", pitch: 420, role: "scorpio · candle witch · reads the cards" },
+  emi: { name: "EMI", color: "#a6e94a", pitch: 740, role: "gemini · knows your big three already" },
+  cole: { name: "COLE", color: "#4f9bff", pitch: 540, role: "capricorn · dreams & numbers · 'doesn't believe it'" },
 };
 
 export interface Line {
@@ -21,9 +21,9 @@ export interface Line {
   text: string;
 }
 
-const a = (text: string): Line => ({ who: "anya", text });
-const m = (text: string): Line => ({ who: "mila", text });
-const k = (text: string): Line => ({ who: "kira", text });
+const a = (text: string): Line => ({ who: "jetta", text });
+const m = (text: string): Line => ({ who: "emi", text });
+const k = (text: string): Line => ({ who: "cole", text });
 
 /* ------------------------------------------------------------------ */
 /*  AMBIENT — little scenes they drift through when nobody's around    */
@@ -42,7 +42,7 @@ export const SCENES: Line[][] = [
   [
     m("mercury goes retrograde thursday so if i text anyone weird this week it's not my fault."),
     k("you texted your ex 'u up' in august. mercury wasn't doing anything in august."),
-    m("mercury was in my fifth house, kira. educate yourself."),
+    m("mercury was in my fifth house, cole. educate yourself."),
     k("i don't have houses. i have a bedroom and a mom who doesn't knock."),
   ],
   // freezer spell
@@ -63,7 +63,7 @@ export const SCENES: Line[][] = [
   ],
   // big three
   [
-    m("okay i'm making a big three chart for the group chat. anya, go."),
+    m("okay i'm making a big three chart for the group chat. jetta, go."),
     a("scorpio sun, scorpio moon. you know my rising."),
     m("aquarius. which is why you're like this."),
     k("i'm not telling you mine."),
@@ -160,7 +160,7 @@ export const SCENES: Line[][] = [
   ],
   // curse ethics
   [
-    m("anya can you curse someone just a little. like a stubbed toe."),
+    m("jetta can you curse someone just a little. like a stubbed toe."),
     a("i don't do toes. it comes back threefold."),
     k("so you'd get three stubbed toes."),
     a("three stubbed toes, yeah. not worth it for brittany."),
@@ -197,7 +197,7 @@ export const SCENES: Line[][] = [
     a("mars is in your first house right now. makes sense."),
     m("don't use astrology against me."),
     k("just say it's a beauty mark."),
-    m("it's red, kira."),
+    m("it's red, cole."),
     k("a spicy beauty mark."),
   ],
   // science fair
@@ -211,7 +211,7 @@ export const SCENES: Line[][] = [
   ],
   // scorpios
   [
-    m("never date a scorpio. no offense anya."),
+    m("never date a scorpio. no offense jetta."),
     a("offense taken. and correct."),
   ],
   // skeptic
@@ -247,7 +247,7 @@ export const SCENES: Line[][] = [
     k("the kiosk guy asked for your number. so it's working."),
     m("not like THAT."),
     a("he was like thirty."),
-    m("i know, anya."),
+    m("i know, jetta."),
   ],
   // math homework
   [
@@ -279,7 +279,7 @@ export const SCENES: Line[][] = [
     m("surprise me then."),
     k("...i ate your chips earlier."),
   ],
-  // anya's birthday
+  // jetta's birthday
   [
     a("my birthday's in three weeks and i want nothing."),
     m("a scorpio saying she wants nothing means she wants everything."),
@@ -356,7 +356,7 @@ export const SCENES: Line[][] = [
     m("does it work?"),
     a("mrs. dolan lost her voice for a week."),
     k("mrs. dolan had strep."),
-    a("strep is a tool, kira."),
+    a("strep is a tool, cole."),
   ],
   // dream about a teacher
   [
@@ -433,24 +433,24 @@ export const MOOD_LABEL: Record<Mood, string> = {
   tired: "they've been out here too long",
 };
 
-/** greeting script (talk steps 0–3). step 3 is always anya asking what you want */
+/** greeting script (talk steps 0–3). step 3 is always jetta asking what you want */
 const GREETS: Record<Mood, Line[]> = {
   nice: [
     a("oh. hey. you can stand here if you want, the light's better."),
     m("hiii. don't be weird about it, everyone here is also weird."),
-    k("i'm kira. that's mila. that's anya. anya's the one with the cards."),
+    k("i'm cole. that's emi. that's jetta. jetta's the one with the cards."),
     a("so. you want a reading, or are you just loitering? both are fine."),
   ],
   mean: [
     k("can we help you."),
-    m("kira. be nice. ...okay but what's your sign, that decides it."),
-    a("ignore them, they haven't eaten. i'm anya."),
+    m("cole. be nice. ...okay but what's your sign, that decides it."),
+    a("ignore them, they haven't eaten. i'm jetta."),
     a("you came all the way over here, so. want me to pull some cards or what?"),
   ],
   tired: [
     m("oh thank god, a new person. we've run out of things to say."),
     k("we have not. you've been talking for four hours."),
-    a("hi. i'm anya. they've been arguing about libras since eleven."),
+    a("hi. i'm jetta. they've been arguing about libras since eleven."),
     a("stand wherever. want a reading? i genuinely need a distraction."),
   ],
 };
@@ -480,55 +480,55 @@ export const IGNORED: Line[] = [
 ];
 
 /* ------------------------------------------------------------------ */
-/*  REACTIONS during the reading — mila & kira chiming in              */
+/*  REACTIONS during the reading — emi & cole chiming in              */
 /* ------------------------------------------------------------------ */
-const GOOD_MILA = [
+const GOOD_EMI = [
   "oh that's actually really good.",
   "okay i'm kind of jealous now.",
   "that tracks with your aura honestly.",
   "that's a good one. don't ruin it.",
   "you must have a nice venus. i can tell.",
 ];
-const GOOD_KIRA = [
+const GOOD_COLE = [
   "huh. lucky.",
   "don't get cocky about it.",
   "that's the nicest thing the deck's said all week.",
   "fine. good for you.",
 ];
-const BAD_MILA = [
+const BAD_EMI = [
   "oh no. okay. it's fine. it's probably fine.",
-  "anya, re-pull. nobody saw that.",
+  "jetta, re-pull. nobody saw that.",
   "that's so rough, i'm sorry.",
   "is this a mercury thing. tell me it's a mercury thing.",
 ];
-const BAD_KIRA = [
+const BAD_COLE = [
   "yikes.",
   "well. that sucks.",
   "at least it's honest.",
   "the deck's kind of a bitch tonight.",
   "i had a dream about this card. it didn't end well either.",
 ];
-const MID_MILA = [
+const MID_EMI = [
   "what does that even mean.",
   "that's so vague. very horoscope app.",
   "okay but that could be anything.",
 ];
-const MID_KIRA = [
+const MID_COLE = [
   "makes sense if you squint.",
   "that's a shrug of a card.",
   "sure.",
 ];
-const REV_MILA = ["wait it's upside down, that changes it right?", "flipped. that's never a good sign."];
-const REV_KIRA = ["reversed. of course it is.", "flipped. figures."];
+const REV_EMI = ["wait it's upside down, that changes it right?", "flipped. that's never a good sign."];
+const REV_COLE = ["reversed. of course it is.", "flipped. figures."];
 
 export function reactionFor(vibe: number, reversed: boolean): Line {
   const pick = (arr: string[]) => arr[(Math.random() * arr.length) | 0];
   if (reversed && Math.random() < 0.5) {
-    return Math.random() < 0.5 ? m(pick(REV_MILA)) : k(pick(REV_KIRA));
+    return Math.random() < 0.5 ? m(pick(REV_EMI)) : k(pick(REV_COLE));
   }
-  if (vibe >= 1) return Math.random() < 0.5 ? m(pick(GOOD_MILA)) : k(pick(GOOD_KIRA));
-  if (vibe <= -1) return Math.random() < 0.5 ? m(pick(BAD_MILA)) : k(pick(BAD_KIRA));
-  return Math.random() < 0.5 ? m(pick(MID_MILA)) : k(pick(MID_KIRA));
+  if (vibe >= 1) return Math.random() < 0.5 ? m(pick(GOOD_EMI)) : k(pick(GOOD_COLE));
+  if (vibe <= -1) return Math.random() < 0.5 ? m(pick(BAD_EMI)) : k(pick(BAD_COLE));
+  return Math.random() < 0.5 ? m(pick(MID_EMI)) : k(pick(MID_COLE));
 }
 
 export const VERDICT_LEAD = "okay. all three together, here's what's going on with you…";

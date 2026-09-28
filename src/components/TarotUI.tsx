@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { GIRLS, reactionFor } from "../game/dialogue";
-import { useGame } from "../game/store";
+import { revealReady, useGame } from "../game/store";
 import { POSITIONS, SUIT_INFO, verdictFor, type TarotCard } from "../game/tarot";
 import { bannerText, getCardTheme } from "../game/tarotStyle";
 import { audio } from "../game/audio";
@@ -196,12 +196,12 @@ function Reading() {
     [picked.map((p) => p.uid).join(",")]
   );
 
-  // anya voices the card, then the other girls chime in
+  // jetta voices the card, then the other girls chime in
   useEffect(() => {
     if (revealIdx > 2 || picked.length < 3) return;
     const r = reactions[revealIdx];
     if (!r) return;
-    audio.say(GIRLS.anya.pitch, 8);
+    audio.say(GIRLS.jetta.pitch, 8);
     const id = window.setTimeout(() => {
       useGame.getState().sayAs(r.who, r.text);
       audio.say(GIRLS[r.who].pitch, r.text.length / 6);
@@ -215,6 +215,14 @@ function Reading() {
     setTab("reading");
   }, [revealIdx]);
 
+  // the reveal can't be mashed through — show the button as waiting its turn
+  const [ready, setReady] = useState(true);
+  useEffect(() => {
+    setReady(revealReady());
+    const id = window.setInterval(() => setReady(revealReady()), 250);
+    return () => window.clearInterval(id);
+  }, [revealIdx]);
+
   if (picked.length < 3) return null;
 
   // Final summary verdict
@@ -226,7 +234,7 @@ function Reading() {
       verdict.status === "ready" && verdict.text
         ? verdict.text
         : waiting
-          ? "anya is staring at them…"
+          ? "jetta is staring at them…"
           : fallback.text;
     return (
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center p-4">
@@ -266,7 +274,7 @@ function Reading() {
           </div>
 
           <div
-            className={`pixel mt-3.5 text-[13px] leading-relaxed text-white/95 ${
+            className={`pixel mt-3.5 text-[14px] leading-relaxed text-white/95 ${
               waiting ? "blink-soft italic text-white/60" : ""
             }`}
           >
@@ -277,13 +285,13 @@ function Reading() {
             <div className="mt-5 flex flex-wrap justify-center gap-2.5">
               <button
                 onClick={() => useGame.getState().pullAgain()}
-                className="pixel rounded-[3px] border border-[#ffe600]/70 bg-[#ffe600]/15 px-3.5 py-2 text-[12px] font-bold text-[#ffe600] transition hover:bg-[#ffe600]/30 shadow"
+                className="pixel rounded-[3px] border border-[#ffe600]/70 bg-[#ffe600]/15 px-3.5 py-2 text-[13px] font-bold text-[#ffe600] transition hover:bg-[#ffe600]/30 shadow"
               >
                 🔮 shuffle full deck & draw again
               </button>
               <button
                 onClick={() => useGame.getState().hang()}
-                className="pixel rounded-[3px] border border-white/25 bg-white/10 px-3.5 py-2 text-[12px] text-white transition hover:bg-white/25"
+                className="pixel rounded-[3px] border border-white/25 bg-white/10 px-3.5 py-2 text-[13px] text-white transition hover:bg-white/25"
               >
                 🌙 hang in the hideout
               </button>
@@ -327,7 +335,7 @@ function Reading() {
                   tab === "reading" ? "bg-[#ffe600] text-black font-bold" : "text-white/50 hover:text-white"
                 }`}
               >
-                Anya
+                Jetta
               </button>
               <button
                 onClick={() => setTab("symbolism")}
@@ -360,14 +368,14 @@ function Reading() {
           {/* Tab content */}
           {tab === "reading" ? (
             <div className="mt-2 min-h-[70px]">
-              <div className="pixel text-[12px] leading-relaxed text-white/95 sm:text-[13px]">
-                <span className="font-bold" style={{ color: GIRLS.anya.color }}>
-                  ANYA:{" "}
+              <div className="pixel text-[13px] leading-relaxed text-white/95 sm:text-[14px]">
+                <span className="font-bold" style={{ color: GIRLS.jetta.color }}>
+                  JETTA:{" "}
                 </span>
                 “{meaning}”
               </div>
               {r && (
-                <div className="pixel mt-2 border-l-2 border-white/20 pl-2 text-[11px] leading-relaxed text-white/65">
+                <div className="pixel mt-2 border-l-2 border-white/20 pl-2 text-[12px] leading-relaxed text-white/65">
                   <span className="font-bold" style={{ color: GIRLS[r.who].color }}>
                     {GIRLS[r.who].name}:{" "}
                   </span>
@@ -376,7 +384,7 @@ function Reading() {
               )}
             </div>
           ) : (
-            <div className="pixel mt-2 min-h-[70px] text-[11px] leading-relaxed text-white/80">
+            <div className="pixel mt-2 min-h-[70px] text-[12px] leading-relaxed text-white/80">
               <div className="text-[#ffe600] font-bold">Rider-Waite Symbolism:</div>
               <div className="mt-1 italic">{d.card.symbolism}</div>
             </div>
@@ -388,10 +396,19 @@ function Reading() {
               Card {revealIdx + 1} of 3 {revealIdx === 2 ? "· final card" : ""}
             </div>
             <button
-              onClick={() => useGame.getState().nextReveal()}
-              className="pixel rounded-[3px] border border-white/30 bg-white/15 px-3 py-1.5 text-[12px] font-bold text-white transition hover:bg-white/30 shadow"
+              onClick={() => {
+                if (revealReady()) useGame.getState().nextReveal();
+              }}
+              disabled={!ready}
+              className={`pixel rounded-[3px] border border-white/30 bg-white/15 px-3 py-1.5 text-[13px] font-bold text-white shadow transition ${
+                ready ? "hover:bg-white/30" : "cursor-default opacity-45"
+              }`}
             >
-              {revealIdx === 2 ? "✦ reveal verdict [E]" : "next card [E] ▼"}
+              {ready
+                ? revealIdx === 2
+                  ? "✦ reveal verdict [E]"
+                  : "next card [E] ▼"
+                : "…"}
             </button>
           </div>
         </div>

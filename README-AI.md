@@ -7,9 +7,9 @@ Gemini only ever *adds* to it, and the game never waits on it.
 
 | call | when | what it produces |
 |---|---|---|
-| `lore` | first boot of the day (cached 24h in `localStorage`) | a character bible: 4–6 shared entries, 6–7 each for anya/mila/kira, plus `tonight` |
+| `lore` | first boot of the day (cached 24h in `localStorage`) | a character bible: 4–6 shared entries, 6–7 each for jetta/emi/cole, plus `tonight` |
 | `packet` | on refresh, then after a beat or two of scripted chatter mid-session | a 6–9 line exchange built from that bible, ending maybe a third of the time in choice buttons |
-| `verdict` | when the third card is revealed | Anya's synthesis of all three cards → `{title, text}` |
+| `verdict` | when the third card is revealed | Jetta's synthesis of all three cards → `{title, text}` |
 
 Everything else — greetings, readings' card text, reactions, ambient scenes — is the script in
 `src/game/dialogue.ts`. If the wire goes down you get a toast and the original game, unchanged.
