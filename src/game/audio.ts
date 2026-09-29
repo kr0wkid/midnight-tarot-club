@@ -264,6 +264,33 @@ class GameAudio {
     o.stop(t + dur + 0.02);
   }
 
+  /** a small orange cat going "mrow" — pitch sweeps up, then away */
+  meow(big = true) {
+    if (!this.ctx || !this.master) return;
+    const ctx = this.ctx;
+    const master: AudioNode = this.master;
+    const t = ctx.currentTime;
+    const o = ctx.createOscillator();
+    o.type = "triangle";
+    const g = ctx.createGain();
+    const lp = ctx.createBiquadFilter();
+    lp.type = "lowpass";
+    lp.frequency.value = 2400;
+    const f = 470 + Math.random() * 110;
+    const dur = big ? 0.36 : 0.17;
+    o.frequency.setValueAtTime(f * 0.78, t);
+    o.frequency.exponentialRampToValueAtTime(f * (big ? 1.5 : 1.8), t + dur * 0.24);
+    o.frequency.exponentialRampToValueAtTime(f * 0.58, t + dur);
+    const vol = big ? 0.05 : 0.035;
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(vol, t + 0.025);
+    g.gain.setValueAtTime(vol, t + dur * 0.55);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g).connect(lp).connect(master);
+    o.start(t);
+    o.stop(t + dur + 0.03);
+  }
+
   /** a burst of voice blips sized to the line */
   say(pitch: number, syllables: number) {
     const n = Math.max(2, Math.min(14, Math.round(syllables)));

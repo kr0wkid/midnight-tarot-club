@@ -5,6 +5,7 @@ import StreetLamp from "./StreetLamp";
 import Garage from "./Garage";
 import VendingMachine from "./VendingMachine";
 import GroundRitual from "./GroundRitual";
+import Cat from "./Cat";
 import { Girls } from "./Characters";
 import {
   BrickWall,
@@ -205,6 +206,7 @@ function Interactions() {
   return (
     <>
       <Girls />
+      <Cat />
       <GroundRitual />
     </>
   );
