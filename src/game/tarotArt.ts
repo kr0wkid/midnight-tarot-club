@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import type { TarotCard } from "./tarot";
 import { bannerText, getCardTheme } from "./tarotStyle";
+import { cardSrc, CARD_BACK_SRC } from "./cardAssets";
 
 function canvas(w: number, h: number) {
   const c = document.createElement("canvas");
@@ -29,7 +30,35 @@ const EYE_GREEN = "#39ff14";
 const EYE_PINK = "#ff2a7f";
 const CLOUD = "#c86bff";
 
-let backTex: THREE.Texture | null = null;
+/** card art is 50x70 (5:7) — canvas is an integer 2x so pixels stay even */
+const ART_W = 100;
+const ART_H = 140;
+/** the legacy procedural art draws at this size, then gets blitted in */
+const LEGACY_W = 96;
+const LEGACY_H = 144;
+
+/**
+ * A stable texture that starts out as the legacy procedural art (so the card
+ * is never blank) and swaps to the pixel-art PNG the moment it decodes.
+ */
+function imageTexture(url: string, drawFallback: (ctx: CanvasRenderingContext2D) => void) {
+  const target = canvas(ART_W, ART_H);
+  const fb = canvas(LEGACY_W, LEGACY_H);
+  drawFallback(fb.ctx);
+  target.ctx.drawImage(fb.c, 0, 0, ART_W, ART_H);
+  const tex = toTex(target.c);
+
+  const img = new Image();
+  img.onload = () => {
+    target.ctx.clearRect(0, 0, ART_W, ART_H);
+    target.ctx.imageSmoothingEnabled = false;
+    target.ctx.drawImage(img, 0, 0, ART_W, ART_H);
+    tex.needsUpdate = true;
+  };
+  img.onerror = () => console.warn("[tarotArt] card art failed to load:", url);
+  img.src = url;
+  return tex;
+}
 
 /** draw a chunky pixel lightning bolt */
 function bolt(
@@ -55,13 +84,10 @@ function bolt(
   ctx.fillRect(cx, cy, 2, 3);
 }
 
-/** neon-punk card back: black field, acid eye, lightning + corner clouds.
- *  Deliberately simple — one hero motif, lots of black air. */
-export function makeTarotBackTexture() {
-  if (backTex) return backTex;
-  const W = 96;
-  const H = 144;
-  const { c, ctx } = canvas(W, H);
+/** legacy neon-punk card back (fallback art under the pixel PNG) */
+function drawLegacyBack(ctx: CanvasRenderingContext2D) {
+  const W = LEGACY_W;
+  const H = LEGACY_H;
 
   // black card stock
   ctx.fillStyle = INK;
@@ -141,21 +167,21 @@ export function makeTarotBackTexture() {
   ctx.fillRect(midX - 1, 42, 2, 2);
   ctx.fillRect(midX - 2, midY + 30, 4, 7);
   ctx.fillRect(midX - 1, midY + 37, 2, 2);
+}
 
-  backTex = toTex(c);
+let backTex: THREE.Texture | null = null;
+
+/** the card back — pixel art PNG, legacy neon eye as fallback */
+export function makeTarotBackTexture() {
+  if (backTex) return backTex;
+  backTex = imageTexture(CARD_BACK_SRC, drawLegacyBack);
   return backTex;
 }
 
-const faceCache = new Map<number, THREE.Texture>();
-
-/** neon-punk face: black frame, flat day-glo art, one big glyph, yellow plate. */
-export function makeTarotFaceTexture(card: TarotCard) {
-  const hit = faceCache.get(card.id);
-  if (hit) return hit;
-
-  const W = 96;
-  const H = 144;
-  const { c, ctx } = canvas(W, H);
+/** legacy neon-punk face (fallback art under the pixel PNG) */
+function drawLegacyFace(ctx: CanvasRenderingContext2D, card: TarotCard) {
+  const W = LEGACY_W;
+  const H = LEGACY_H;
   const theme = getCardTheme(card);
 
   // black stock
@@ -251,8 +277,15 @@ export function makeTarotFaceTexture(card: TarotCard) {
     ctx.fillText(l1, W / 2, py + 8);
     ctx.fillText(l2, W / 2, py + 17);
   }
+}
 
-  const tex = toTex(c);
+const faceCache = new Map<number, THREE.Texture>();
+
+/** a card face — pixel art PNG, legacy neon-punk art as fallback */
+export function makeTarotFaceTexture(card: TarotCard) {
+  const hit = faceCache.get(card.id);
+  if (hit) return hit;
+  const tex = imageTexture(cardSrc(card), (ctx) => drawLegacyFace(ctx, card));
   faceCache.set(card.id, tex);
   return tex;
 }

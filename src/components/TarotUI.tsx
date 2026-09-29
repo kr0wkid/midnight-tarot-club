@@ -2,127 +2,46 @@ import { useEffect, useMemo, useState } from "react";
 import { GIRLS, reactionFor } from "../game/dialogue";
 import { revealReady, useGame } from "../game/store";
 import { POSITIONS, SUIT_INFO, verdictFor, type TarotCard } from "../game/tarot";
-import { bannerText, getCardTheme } from "../game/tarotStyle";
+import { cardSrc, CARD_BACK_SRC } from "../game/cardAssets";
+import { bannerText } from "../game/tarotStyle";
 import { audio } from "../game/audio";
 
-/* Neon-punk card back: black stock, acid eye, minimal bolts + clouds */
+/* Pixel card back — "The One-Sized Arcana" (50x70 art, scaled crisp) */
 function CardBack({ small = false }: { small?: boolean }) {
   return (
     <div
-      className={`relative flex h-full w-full items-center justify-center overflow-hidden bg-[#0a0a0e] ${
+      className={`relative h-full w-full overflow-hidden bg-[#0a0a0e] ${
         small ? "rounded-[3px]" : "rounded-[5px]"
       }`}
     >
-      {/* neon rim */}
-      <div className="pointer-events-none absolute inset-[3px] border border-[#ff2a7f]/80" />
-      {/* corner clouds */}
-      <div className="absolute left-[8%] top-[7%] h-[10%] w-[22%] rounded-full bg-[#c86bff]" />
-      <div className="absolute right-[8%] top-[7%] h-[10%] w-[22%] rounded-full bg-[#c86bff]" />
-      <div className="absolute bottom-[7%] left-[8%] h-[10%] w-[22%] rounded-full bg-[#c86bff]" />
-      <div className="absolute bottom-[7%] right-[8%] h-[10%] w-[22%] rounded-full bg-[#c86bff]" />
-      {/* bolts */}
-      <div className={`absolute left-[22%] top-[22%] font-bold text-[#39ff14] ${small ? "text-[10px]" : "text-sm"}`}>⚡</div>
-      <div className={`absolute right-[22%] top-[22%] font-bold text-[#39ff14] ${small ? "text-[10px]" : "text-sm"}`}>⚡</div>
-      <div className={`absolute bottom-[22%] left-[22%] font-bold text-[#39ff14] ${small ? "text-[10px]" : "text-sm"}`}>⚡</div>
-      <div className={`absolute bottom-[22%] right-[22%] font-bold text-[#39ff14] ${small ? "text-[10px]" : "text-sm"}`}>⚡</div>
-
-      {/* the eye */}
-      <div className="relative flex items-center justify-center">
-        <div
-          className={`rounded-[50%] border-2 border-black bg-[#ff2a7f] ${small ? "p-[3px]" : "p-[5px]"}`}
-        >
-          <div
-            className={`flex items-center justify-center rounded-[50%] border-2 border-black bg-[#e8ff00] ${
-              small ? "h-8 w-12" : "h-12 w-[72px]"
-            }`}
-          >
-            <div
-              className={`flex items-center justify-center rounded-[50%] border border-black bg-[#39ff14] ${
-                small ? "h-6 w-4" : "h-9 w-6"
-              }`}
-            >
-              <div className={`rounded-[50%] bg-[#ff2a7f] ${small ? "h-4 w-[5px]" : "h-6 w-2"}`} />
-            </div>
-          </div>
-        </div>
-      </div>
+      <img
+        src={CARD_BACK_SRC}
+        alt=""
+        draggable={false}
+        className="h-full w-full object-fill [image-rendering:pixelated]"
+      />
     </div>
   );
 }
 
-/* Neon-punk face: flat day-glo art, one hero glyph, yellow title plate */
+/* Pixel card face — "The One-Sized Arcana"; rotates 180° when reversed */
 function CardFace({ card, reversed, big = false }: { card: TarotCard; reversed: boolean; big?: boolean }) {
-  const theme = getCardTheme(card);
-  const tag = card.arcana === "major" ? "★" : card.suit?.slice(0, 1).toUpperCase();
-
   return (
     <div
-      className={`relative flex h-full w-full flex-col overflow-hidden bg-[#0a0a0e] ${
-        big ? "rounded-[6px] p-[5px]" : "rounded-[3px] p-[4px]"
+      className={`relative h-full w-full overflow-hidden bg-[#0a0a0e] ${
+        big ? "rounded-[6px]" : "rounded-[3px]"
       }`}
       style={{ transform: reversed ? "rotate(180deg)" : undefined }}
     >
-      {/* art window */}
-      <div
-        className="relative flex-1 overflow-hidden"
-        style={{
-          backgroundColor: theme.bg,
-          backgroundImage: `radial-gradient(${theme.deep} 1.2px, transparent 1.3px)`,
-          backgroundSize: big ? "9px 9px" : "7px 7px",
-        }}
-      >
-        {/* edge bolts */}
-        <div
-          className={`absolute left-1 top-6 font-bold ${big ? "text-sm" : "text-[10px]"}`}
-          style={{ color: theme.accent }}
-        >
-          ⚡
-        </div>
-        <div
-          className={`absolute bottom-1 right-1 font-bold ${big ? "text-sm" : "text-[10px]"}`}
-          style={{ color: theme.accent }}
-        >
-          ⚡
-        </div>
-
-        {/* badges */}
-        <div className="absolute left-1 top-1 flex items-center gap-1">
-          <span
-            className={`pixel bg-black font-bold text-white ${big ? "px-1.5 py-[3px] text-[10px]" : "px-1 py-[1px] text-[7px]"}`}
-          >
-            {card.numeral}
-          </span>
-        </div>
-        <div className="absolute right-1 top-1">
-          <span
-            className={`pixel bg-black font-bold ${big ? "px-1.5 py-[3px] text-[10px]" : "px-1 py-[1px] text-[7px]"}`}
-            style={{ color: theme.accent }}
-          >
-            {tag}
-          </span>
-        </div>
-
-        {/* hero glyph */}
-        <div className="absolute inset-0 flex items-center justify-center pt-2">
-          <span
-            className={big ? "text-6xl" : "text-3xl"}
-            style={{
-              color: "#ffffff",
-              WebkitTextStroke: big ? "2px #0a0a0e" : "1.5px #0a0a0e",
-              paintOrder: "stroke fill",
-              textShadow: "2px 2px 0 #0a0a0e",
-            }}
-          >
-            {card.icon}
-          </span>
-        </div>
-        {/* accent underline */}
-        <div className="absolute bottom-2 left-1/2 h-[3px] w-10 -translate-x-1/2 border-b border-black" style={{ background: theme.accent }} />
-      </div>
-
-      {/* yellow title plate */}
-      <div className={`mt-[4px] border-y-2 border-black bg-[#ffe600] ${big ? "py-[5px]" : "py-[3px]"} px-1 text-center`}>
-        <div className={`pixel font-bold uppercase leading-none text-black ${big ? "text-[10px]" : "text-[6px]"}`}>
+      <img
+        src={cardSrc(card)}
+        alt={card.name}
+        draggable={false}
+        className="h-full w-full object-fill [image-rendering:pixelated]"
+      />
+      {/* yellow name plate — kept from the old deck so the card is legible */}
+      <div className="absolute inset-x-0 bottom-0 border-t border-black bg-[#ffe600] px-1 text-center">
+        <div className={`pixel font-bold uppercase leading-none text-black ${big ? "py-[4px] text-[10px]" : "py-[2px] text-[6px]"}`}>
           {bannerText(card)}.
         </div>
       </div>
@@ -154,7 +73,7 @@ function Spread() {
                 if (sel) g.unpickCard(d.uid);
                 else g.pickCard(d.uid);
               }}
-              className="spread-card relative h-[112px] w-[76px] transition-transform duration-200 hover:-translate-y-3 sm:h-[142px] sm:w-[96px]"
+              className="spread-card relative h-[106px] w-[76px] transition-transform duration-200 hover:-translate-y-3 sm:h-[134px] sm:w-[96px]"
               style={{
                 transform: sel ? `translateY(-18px) rotate(0deg)` : `translateY(${lift}px) rotate(${arc}deg)`,
               }}
@@ -246,7 +165,7 @@ function Reading() {
             {picked.map((p, i) => (
               <div
                 key={p.uid}
-                className="relative h-20 w-14 overflow-hidden rounded-[3px] border-2 border-black shadow-md"
+                className="relative h-[78px] w-14 overflow-hidden rounded-[3px] border-2 border-black shadow-md"
               >
                 <CardFace card={p.card} reversed={p.reversed} />
                 <div className="pixel absolute bottom-0 inset-x-0 bg-black/80 py-0.5 text-[8px] text-[#ffe600]">
@@ -310,8 +229,8 @@ function Reading() {
   return (
     <div className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center p-3 pb-16 sm:pb-20">
       <div className="vn-box pointer-events-auto flex w-[min(620px,96vw)] gap-3.5 rounded-[6px] border border-white/20 bg-black/85 p-3.5 sm:gap-5 sm:p-4 shadow-[0_4px_30px_rgba(0,0,0,0.8)]">
-        {/* Large neon-punk tarot card */}
-        <div className="relative h-[210px] w-[138px] shrink-0 sm:h-[240px] sm:w-[158px]">
+        {/* Large pixel tarot card */}
+        <div className="relative h-[193px] w-[138px] shrink-0 sm:h-[221px] sm:w-[158px]">
           <div className="h-full w-full overflow-hidden rounded-[6px] border-2 border-black shadow-[0_0_18px_rgba(255,42,127,0.45)]">
             <CardFace card={d.card} reversed={d.reversed} big />
           </div>

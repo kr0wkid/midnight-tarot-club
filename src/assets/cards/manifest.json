@@ -1,0 +1,803 @@
+{
+  "deck": "The One-Sized Arcana",
+  "cardCount": 78,
+  "cardDimensions": {
+    "width": 50,
+    "height": 70,
+    "unit": "px"
+  },
+  "theme": "Midnight Alley Pixel Tarot",
+  "generatedAt": "2026-09-29T12:57:25.327Z",
+  "assets": [
+    {
+      "id": "back",
+      "filename": "card-back.png",
+      "name": "Midnight Arcana Card Back",
+      "suit": "back",
+      "rank": -1,
+      "numeral": "",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "major-0",
+      "filename": "major-00-the-fool.png",
+      "name": "The Fool",
+      "suit": "major",
+      "rank": 0,
+      "numeral": "0",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "major-1",
+      "filename": "major-01-the-magician.png",
+      "name": "The Magician",
+      "suit": "major",
+      "rank": 1,
+      "numeral": "I",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "major-2",
+      "filename": "major-02-the-high-priestess.png",
+      "name": "The High Priestess",
+      "suit": "major",
+      "rank": 2,
+      "numeral": "II",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "major-3",
+      "filename": "major-03-the-empress.png",
+      "name": "The Empress",
+      "suit": "major",
+      "rank": 3,
+      "numeral": "III",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "major-4",
+      "filename": "major-04-the-emperor.png",
+      "name": "The Emperor",
+      "suit": "major",
+      "rank": 4,
+      "numeral": "IV",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "major-5",
+      "filename": "major-05-the-hierophant.png",
+      "name": "The Hierophant",
+      "suit": "major",
+      "rank": 5,
+      "numeral": "V",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "major-6",
+      "filename": "major-06-the-lovers.png",
+      "name": "The Lovers",
+      "suit": "major",
+      "rank": 6,
+      "numeral": "VI",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "major-7",
+      "filename": "major-07-the-chariot.png",
+      "name": "The Chariot",
+      "suit": "major",
+      "rank": 7,
+      "numeral": "VII",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "major-8",
+      "filename": "major-08-strength.png",
+      "name": "Strength",
+      "suit": "major",
+      "rank": 8,
+      "numeral": "VIII",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "major-9",
+      "filename": "major-09-the-hermit.png",
+      "name": "The Hermit",
+      "suit": "major",
+      "rank": 9,
+      "numeral": "IX",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "major-10",
+      "filename": "major-10-wheel-of-fortune.png",
+      "name": "Wheel of Fortune",
+      "suit": "major",
+      "rank": 10,
+      "numeral": "X",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "major-11",
+      "filename": "major-11-justice.png",
+      "name": "Justice",
+      "suit": "major",
+      "rank": 11,
+      "numeral": "XI",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "major-12",
+      "filename": "major-12-the-hanged-man.png",
+      "name": "The Hanged Man",
+      "suit": "major",
+      "rank": 12,
+      "numeral": "XII",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "major-13",
+      "filename": "major-13-death.png",
+      "name": "Death",
+      "suit": "major",
+      "rank": 13,
+      "numeral": "XIII",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "major-14",
+      "filename": "major-14-temperance.png",
+      "name": "Temperance",
+      "suit": "major",
+      "rank": 14,
+      "numeral": "XIV",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "major-15",
+      "filename": "major-15-the-devil.png",
+      "name": "The Devil",
+      "suit": "major",
+      "rank": 15,
+      "numeral": "XV",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "major-16",
+      "filename": "major-16-the-tower.png",
+      "name": "The Tower",
+      "suit": "major",
+      "rank": 16,
+      "numeral": "XVI",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "major-17",
+      "filename": "major-17-the-star.png",
+      "name": "The Star",
+      "suit": "major",
+      "rank": 17,
+      "numeral": "XVII",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "major-18",
+      "filename": "major-18-the-moon.png",
+      "name": "The Moon",
+      "suit": "major",
+      "rank": 18,
+      "numeral": "XVIII",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "major-19",
+      "filename": "major-19-the-sun.png",
+      "name": "The Sun",
+      "suit": "major",
+      "rank": 19,
+      "numeral": "XIX",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "major-20",
+      "filename": "major-20-judgement.png",
+      "name": "Judgement",
+      "suit": "major",
+      "rank": 20,
+      "numeral": "XX",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "major-21",
+      "filename": "major-21-the-world.png",
+      "name": "The World",
+      "suit": "major",
+      "rank": 21,
+      "numeral": "XXI",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "wands-1",
+      "filename": "wands-01-1-of-wands.png",
+      "name": "1 of Wands",
+      "suit": "wands",
+      "rank": 1,
+      "numeral": "I",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "wands-2",
+      "filename": "wands-02-2-of-wands.png",
+      "name": "2 of Wands",
+      "suit": "wands",
+      "rank": 2,
+      "numeral": "II",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "wands-3",
+      "filename": "wands-03-3-of-wands.png",
+      "name": "3 of Wands",
+      "suit": "wands",
+      "rank": 3,
+      "numeral": "III",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "wands-4",
+      "filename": "wands-04-4-of-wands.png",
+      "name": "4 of Wands",
+      "suit": "wands",
+      "rank": 4,
+      "numeral": "IV",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "wands-5",
+      "filename": "wands-05-5-of-wands.png",
+      "name": "5 of Wands",
+      "suit": "wands",
+      "rank": 5,
+      "numeral": "V",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "wands-6",
+      "filename": "wands-06-6-of-wands.png",
+      "name": "6 of Wands",
+      "suit": "wands",
+      "rank": 6,
+      "numeral": "VI",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "wands-7",
+      "filename": "wands-07-7-of-wands.png",
+      "name": "7 of Wands",
+      "suit": "wands",
+      "rank": 7,
+      "numeral": "VII",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "wands-8",
+      "filename": "wands-08-8-of-wands.png",
+      "name": "8 of Wands",
+      "suit": "wands",
+      "rank": 8,
+      "numeral": "VIII",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "wands-9",
+      "filename": "wands-09-9-of-wands.png",
+      "name": "9 of Wands",
+      "suit": "wands",
+      "rank": 9,
+      "numeral": "IX",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "wands-10",
+      "filename": "wands-10-10-of-wands.png",
+      "name": "10 of Wands",
+      "suit": "wands",
+      "rank": 10,
+      "numeral": "X",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "wands-11",
+      "filename": "wands-11-page-of-wands.png",
+      "name": "Page of Wands",
+      "suit": "wands",
+      "rank": 11,
+      "numeral": "P",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "wands-12",
+      "filename": "wands-12-knight-of-wands.png",
+      "name": "Knight of Wands",
+      "suit": "wands",
+      "rank": 12,
+      "numeral": "N",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "wands-13",
+      "filename": "wands-13-queen-of-wands.png",
+      "name": "Queen of Wands",
+      "suit": "wands",
+      "rank": 13,
+      "numeral": "Q",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "wands-14",
+      "filename": "wands-14-king-of-wands.png",
+      "name": "King of Wands",
+      "suit": "wands",
+      "rank": 14,
+      "numeral": "K",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "cups-1",
+      "filename": "cups-01-1-of-cups.png",
+      "name": "1 of Cups",
+      "suit": "cups",
+      "rank": 1,
+      "numeral": "I",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "cups-2",
+      "filename": "cups-02-2-of-cups.png",
+      "name": "2 of Cups",
+      "suit": "cups",
+      "rank": 2,
+      "numeral": "II",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "cups-3",
+      "filename": "cups-03-3-of-cups.png",
+      "name": "3 of Cups",
+      "suit": "cups",
+      "rank": 3,
+      "numeral": "III",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "cups-4",
+      "filename": "cups-04-4-of-cups.png",
+      "name": "4 of Cups",
+      "suit": "cups",
+      "rank": 4,
+      "numeral": "IV",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "cups-5",
+      "filename": "cups-05-5-of-cups.png",
+      "name": "5 of Cups",
+      "suit": "cups",
+      "rank": 5,
+      "numeral": "V",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "cups-6",
+      "filename": "cups-06-6-of-cups.png",
+      "name": "6 of Cups",
+      "suit": "cups",
+      "rank": 6,
+      "numeral": "VI",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "cups-7",
+      "filename": "cups-07-7-of-cups.png",
+      "name": "7 of Cups",
+      "suit": "cups",
+      "rank": 7,
+      "numeral": "VII",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "cups-8",
+      "filename": "cups-08-8-of-cups.png",
+      "name": "8 of Cups",
+      "suit": "cups",
+      "rank": 8,
+      "numeral": "VIII",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "cups-9",
+      "filename": "cups-09-9-of-cups.png",
+      "name": "9 of Cups",
+      "suit": "cups",
+      "rank": 9,
+      "numeral": "IX",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "cups-10",
+      "filename": "cups-10-10-of-cups.png",
+      "name": "10 of Cups",
+      "suit": "cups",
+      "rank": 10,
+      "numeral": "X",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "cups-11",
+      "filename": "cups-11-page-of-cups.png",
+      "name": "Page of Cups",
+      "suit": "cups",
+      "rank": 11,
+      "numeral": "P",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "cups-12",
+      "filename": "cups-12-knight-of-cups.png",
+      "name": "Knight of Cups",
+      "suit": "cups",
+      "rank": 12,
+      "numeral": "N",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "cups-13",
+      "filename": "cups-13-queen-of-cups.png",
+      "name": "Queen of Cups",
+      "suit": "cups",
+      "rank": 13,
+      "numeral": "Q",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "cups-14",
+      "filename": "cups-14-king-of-cups.png",
+      "name": "King of Cups",
+      "suit": "cups",
+      "rank": 14,
+      "numeral": "K",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "swords-1",
+      "filename": "swords-01-1-of-swords.png",
+      "name": "1 of Swords",
+      "suit": "swords",
+      "rank": 1,
+      "numeral": "I",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "swords-2",
+      "filename": "swords-02-2-of-swords.png",
+      "name": "2 of Swords",
+      "suit": "swords",
+      "rank": 2,
+      "numeral": "II",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "swords-3",
+      "filename": "swords-03-3-of-swords.png",
+      "name": "3 of Swords",
+      "suit": "swords",
+      "rank": 3,
+      "numeral": "III",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "swords-4",
+      "filename": "swords-04-4-of-swords.png",
+      "name": "4 of Swords",
+      "suit": "swords",
+      "rank": 4,
+      "numeral": "IV",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "swords-5",
+      "filename": "swords-05-5-of-swords.png",
+      "name": "5 of Swords",
+      "suit": "swords",
+      "rank": 5,
+      "numeral": "V",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "swords-6",
+      "filename": "swords-06-6-of-swords.png",
+      "name": "6 of Swords",
+      "suit": "swords",
+      "rank": 6,
+      "numeral": "VI",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "swords-7",
+      "filename": "swords-07-7-of-swords.png",
+      "name": "7 of Swords",
+      "suit": "swords",
+      "rank": 7,
+      "numeral": "VII",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "swords-8",
+      "filename": "swords-08-8-of-swords.png",
+      "name": "8 of Swords",
+      "suit": "swords",
+      "rank": 8,
+      "numeral": "VIII",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "swords-9",
+      "filename": "swords-09-9-of-swords.png",
+      "name": "9 of Swords",
+      "suit": "swords",
+      "rank": 9,
+      "numeral": "IX",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "swords-10",
+      "filename": "swords-10-10-of-swords.png",
+      "name": "10 of Swords",
+      "suit": "swords",
+      "rank": 10,
+      "numeral": "X",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "swords-11",
+      "filename": "swords-11-page-of-swords.png",
+      "name": "Page of Swords",
+      "suit": "swords",
+      "rank": 11,
+      "numeral": "P",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "swords-12",
+      "filename": "swords-12-knight-of-swords.png",
+      "name": "Knight of Swords",
+      "suit": "swords",
+      "rank": 12,
+      "numeral": "N",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "swords-13",
+      "filename": "swords-13-queen-of-swords.png",
+      "name": "Queen of Swords",
+      "suit": "swords",
+      "rank": 13,
+      "numeral": "Q",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "swords-14",
+      "filename": "swords-14-king-of-swords.png",
+      "name": "King of Swords",
+      "suit": "swords",
+      "rank": 14,
+      "numeral": "K",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "pentacles-1",
+      "filename": "pentacles-01-1-of-pentacles.png",
+      "name": "1 of Pentacles",
+      "suit": "pentacles",
+      "rank": 1,
+      "numeral": "I",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "pentacles-2",
+      "filename": "pentacles-02-2-of-pentacles.png",
+      "name": "2 of Pentacles",
+      "suit": "pentacles",
+      "rank": 2,
+      "numeral": "II",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "pentacles-3",
+      "filename": "pentacles-03-3-of-pentacles.png",
+      "name": "3 of Pentacles",
+      "suit": "pentacles",
+      "rank": 3,
+      "numeral": "III",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "pentacles-4",
+      "filename": "pentacles-04-4-of-pentacles.png",
+      "name": "4 of Pentacles",
+      "suit": "pentacles",
+      "rank": 4,
+      "numeral": "IV",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "pentacles-5",
+      "filename": "pentacles-05-5-of-pentacles.png",
+      "name": "5 of Pentacles",
+      "suit": "pentacles",
+      "rank": 5,
+      "numeral": "V",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "pentacles-6",
+      "filename": "pentacles-06-6-of-pentacles.png",
+      "name": "6 of Pentacles",
+      "suit": "pentacles",
+      "rank": 6,
+      "numeral": "VI",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "pentacles-7",
+      "filename": "pentacles-07-7-of-pentacles.png",
+      "name": "7 of Pentacles",
+      "suit": "pentacles",
+      "rank": 7,
+      "numeral": "VII",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "pentacles-8",
+      "filename": "pentacles-08-8-of-pentacles.png",
+      "name": "8 of Pentacles",
+      "suit": "pentacles",
+      "rank": 8,
+      "numeral": "VIII",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "pentacles-9",
+      "filename": "pentacles-09-9-of-pentacles.png",
+      "name": "9 of Pentacles",
+      "suit": "pentacles",
+      "rank": 9,
+      "numeral": "IX",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "pentacles-10",
+      "filename": "pentacles-10-10-of-pentacles.png",
+      "name": "10 of Pentacles",
+      "suit": "pentacles",
+      "rank": 10,
+      "numeral": "X",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "pentacles-11",
+      "filename": "pentacles-11-page-of-pentacles.png",
+      "name": "Page of Pentacles",
+      "suit": "pentacles",
+      "rank": 11,
+      "numeral": "P",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "pentacles-12",
+      "filename": "pentacles-12-knight-of-pentacles.png",
+      "name": "Knight of Pentacles",
+      "suit": "pentacles",
+      "rank": 12,
+      "numeral": "N",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "pentacles-13",
+      "filename": "pentacles-13-queen-of-pentacles.png",
+      "name": "Queen of Pentacles",
+      "suit": "pentacles",
+      "rank": 13,
+      "numeral": "Q",
+      "width": 50,
+      "height": 70
+    },
+    {
+      "id": "pentacles-14",
+      "filename": "pentacles-14-king-of-pentacles.png",
+      "name": "King of Pentacles",
+      "suit": "pentacles",
+      "rank": 14,
+      "numeral": "K",
+      "width": 50,
+      "height": 70
+    }
+  ]
+}

@@ -160,7 +160,7 @@ function GroundCard({
   return (
     <group position={[x, 0.008 + lift, z]} rotation-y={rot}>
       <mesh rotation-x={-Math.PI / 2} scale={scale} material={mat} receiveShadow>
-        <planeGeometry args={[0.2, 0.3]} />
+        <planeGeometry args={[0.2, 0.28]} />
       </mesh>
     </group>
   );
@@ -189,7 +189,7 @@ function LaidCard({ drawn, index, revealed }: { drawn: DrawnCard; index: number;
   return (
     <group ref={group} position={[(index - 1) * 0.24, 0.012, 0.04]} rotation-y={(index - 1) * -0.06}>
       <mesh rotation={[-Math.PI / 2, 0, drawn.reversed ? Math.PI : 0]} material={mat}>
-        <planeGeometry args={[0.2, 0.3]} />
+        <planeGeometry args={[0.2, 0.28]} />
       </mesh>
     </group>
   );
