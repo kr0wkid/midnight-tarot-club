@@ -93,6 +93,7 @@ class GameAudio {
     rat.start();
 
     this.scheduleTraffic();
+    this.scheduleRadio();
   }
 
   private makeNoise() {
@@ -157,6 +158,184 @@ class GameAudio {
     out.connect(this.master);
     src.start(t);
     src.stop(t + dur + 0.1);
+  }
+
+  /* ------------------------------------------------------------------ */
+  /*  faint intercepted music — something quiet leaks in once in a while */
+  /* ------------------------------------------------------------------ */
+
+  private scheduleRadio() {
+    const loop = () => {
+      if (!this.ctx || !this.master) return;
+      const r = Math.random();
+      if (r < 0.5) this.radioSnatch();
+      else if (r < 0.8) this.phoneBleed();
+      window.setTimeout(loop, 55000 + Math.random() * 75000);
+    };
+    window.setTimeout(loop, 28000 + Math.random() * 45000);
+  }
+
+  /** a distant radio catching a few bars — grainy, breaking up, drifting past */
+  private radioSnatch() {
+    if (!this.ctx || !this.master || !this.white) return;
+    const ctx = this.ctx;
+    const master = this.master;
+    const t = ctx.currentTime;
+    const notes = [349.23, 392, 440, 392, 329.63, 349.23, 293.66, 261.63, 293.66, 349.23, 329.63];
+    const step = 0.26 + Math.random() * 0.08;
+    const dur = notes.length * step + 0.7;
+
+    // small-speaker band: no rumble, no sparkle
+    const hp = ctx.createBiquadFilter();
+    hp.type = "highpass";
+    hp.frequency.value = 250;
+    const lp = ctx.createBiquadFilter();
+    lp.type = "lowpass";
+    lp.frequency.value = 2200;
+    hp.connect(lp);
+
+    // the signal keeps losing the station for a frame
+    const am = ctx.createGain();
+    am.gain.value = 1;
+    lp.connect(am);
+    let at = t + 0.3;
+    while (at < t + dur - 0.45) {
+      am.gain.setValueAtTime(1, at);
+      am.gain.linearRampToValueAtTime(0.12 + Math.random() * 0.5, at + 0.012);
+      am.gain.linearRampToValueAtTime(1, at + 0.05 + Math.random() * 0.1);
+      at += 0.18 + Math.random() * 0.35;
+    }
+
+    // drifts from one side to the other, like whatever's playing passes by
+    let tail: AudioNode = am;
+    if (typeof ctx.createStereoPanner === "function") {
+      const pan = ctx.createStereoPanner();
+      const dir = Math.random() < 0.5 ? 1 : -1;
+      pan.pan.setValueAtTime(-0.7 * dir, t);
+      pan.pan.linearRampToValueAtTime(0.7 * dir, t + dur);
+      am.connect(pan);
+      tail = pan;
+    }
+
+    // one fader: quiet, snaps in like a station locking on, fades out slow
+    const bus = ctx.createGain();
+    bus.gain.setValueAtTime(0.0001, t);
+    bus.gain.exponentialRampToValueAtTime(0.16, t + 0.25);
+    bus.gain.setValueAtTime(0.16, t + dur - 0.8);
+    bus.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    tail.connect(bus).connect(master);
+
+    // thin hiss riding along underneath it
+    const s = ctx.createBufferSource();
+    s.buffer = this.white;
+    s.loop = true;
+    const sBp = ctx.createBiquadFilter();
+    sBp.type = "bandpass";
+    sBp.frequency.value = 1900;
+    sBp.Q.value = 0.5;
+    const sG = ctx.createGain();
+    sG.gain.setValueAtTime(0.0001, t);
+    sG.gain.exponentialRampToValueAtTime(0.12, t + 0.3);
+    sG.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    s.connect(sBp).connect(sG).connect(am);
+
+    // a few bars, sliding slightly flat like worn tape
+    notes.forEach((f, i) => {
+      const st = t + 0.2 + i * step;
+      const o = ctx.createOscillator();
+      o.type = i % 2 === 0 ? "square" : "sawtooth";
+      const o2 = ctx.createOscillator();
+      o2.type = "triangle";
+      o2.detune.value = 9;
+      o.frequency.setValueAtTime(f, st);
+      o.frequency.linearRampToValueAtTime(f * 0.986, st + step);
+      o2.frequency.setValueAtTime(f, st);
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0.0001, st);
+      g.gain.exponentialRampToValueAtTime(0.15, st + 0.05);
+      g.gain.exponentialRampToValueAtTime(0.0001, st + step * 0.98);
+      o.connect(g);
+      o2.connect(g);
+      g.connect(hp);
+      o.start(st);
+      o2.start(st);
+      o.stop(st + step + 0.03);
+      o2.stop(st + step + 0.03);
+    });
+  }
+
+  /** someone's phone down the block fired off a notification tune */
+  private phoneBleed() {
+    if (!this.ctx || !this.master || !this.white) return;
+    const ctx = this.ctx;
+    const master = this.master;
+    const t = ctx.currentTime;
+    const notes = [440, 523.25, 659.26, 0, 523.25]; // 0 = a rest
+    const step = 0.15;
+    const dur = notes.length * step + 0.45;
+
+    const hp = ctx.createBiquadFilter();
+    hp.type = "highpass";
+    hp.frequency.value = 480;
+    const lp = ctx.createBiquadFilter();
+    lp.type = "lowpass";
+    lp.frequency.value = 3400;
+    hp.connect(lp);
+
+    // one ear only — like an earbud just came out
+    let tail: AudioNode = lp;
+    if (typeof ctx.createStereoPanner === "function") {
+      const pan = ctx.createStereoPanner();
+      pan.pan.value = (Math.random() < 0.5 ? -1 : 1) * (0.6 + Math.random() * 0.3);
+      lp.connect(pan);
+      tail = pan;
+    }
+
+    const bus = ctx.createGain();
+    bus.gain.setValueAtTime(0.0001, t);
+    bus.gain.exponentialRampToValueAtTime(0.2, t + 0.05);
+    bus.gain.setValueAtTime(0.2, t + dur - 0.35);
+    bus.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    tail.connect(bus).connect(master);
+
+    notes.forEach((f, i) => {
+      const st = t + i * step;
+      if (f === 0) return;
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0.0001, st);
+      g.gain.exponentialRampToValueAtTime(0.17, st + 0.006);
+      g.gain.exponentialRampToValueAtTime(0.0001, st + 0.32);
+      const o = ctx.createOscillator();
+      o.type = "sine";
+      o.frequency.value = f;
+      const o2 = ctx.createOscillator();
+      o2.type = "triangle";
+      o2.frequency.value = f * 2;
+      const g2 = ctx.createGain();
+      g2.gain.value = 0.4;
+      o.connect(g);
+      o2.connect(g2).connect(g);
+      g.connect(hp);
+      o.start(st);
+      o2.start(st);
+      o.stop(st + 0.35);
+      o2.stop(st + 0.35);
+
+      // a little speaker grain under each plink
+      const s = ctx.createBufferSource();
+      s.buffer = this.white;
+      const bp = ctx.createBiquadFilter();
+      bp.type = "bandpass";
+      bp.frequency.value = 2600;
+      bp.Q.value = 1.5;
+      const sg = ctx.createGain();
+      sg.gain.setValueAtTime(0.0001, st);
+      sg.gain.exponentialRampToValueAtTime(0.05, st + 0.005);
+      sg.gain.exponentialRampToValueAtTime(0.0001, st + 0.05);
+      s.connect(bp).connect(sg).connect(hp);
+      s.start(st, Math.random());
+      s.stop(st + 0.07);
+    });
   }
 
   setMuted(m: boolean) {
