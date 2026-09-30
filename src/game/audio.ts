@@ -1,8 +1,11 @@
 /**
- * Fully procedural audio: sodium-lamp ballast hum, distant traffic,
- * the occasional passing car, and a little lo-fi busking melody.
+ * Procedural audio: sodium-lamp ballast hum, distant traffic,
+ * the occasional passing car, and a little lo-fi busking melody —
+ * plus occasional quiet leaks of real songs via scRadio.ts.
  * No assets, everything is synthesised with the Web Audio API.
  */
+import { scRadio } from "./scRadio";
+
 class GameAudio {
   ctx: AudioContext | null = null;
   master: GainNode | null = null;
@@ -168,11 +171,23 @@ class GameAudio {
     const loop = () => {
       if (!this.ctx || !this.master) return;
       const r = Math.random();
-      if (r < 0.5) this.radioSnatch();
-      else if (r < 0.8) this.phoneBleed();
+      if (r < 0.4 && scRadio.available) this.scLeak();
+      else if (r < 0.65) this.radioSnatch();
+      else if (r < 0.9) this.phoneBleed();
       window.setTimeout(loop, 55000 + Math.random() * 75000);
     };
     window.setTimeout(loop, 28000 + Math.random() * 45000);
+  }
+
+  /**
+   * A real song leaking in from a window somewhere — 10-30s, fading in
+   * and out (scRadio handles the widget). Falls back to the procedural
+   * radio if SoundCloud is unreachable/blocked/the track refused to load.
+   */
+  private scLeak() {
+    void scRadio.snippet().then((ok) => {
+      if (!ok) this.radioSnatch();
+    });
   }
 
   /** a distant radio catching a few bars — grainy, breaking up, drifting past */
@@ -340,6 +355,10 @@ class GameAudio {
 
   setMuted(m: boolean) {
     this.muted = m;
+    // the SoundCloud widget lives outside the Web Audio graph —
+    // its volume has to be zeroed separately (scRadio keeps its own
+    // fade state, so unmuting restores whatever level was playing)
+    scRadio.setMuted(m);
     if (this.master && this.ctx) {
       this.master.gain.cancelScheduledValues(this.ctx.currentTime);
       this.master.gain.setTargetAtTime(m ? 0 : 0.9, this.ctx.currentTime, 0.08);
