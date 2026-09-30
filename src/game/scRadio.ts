@@ -6,8 +6,8 @@
  * driven with play/pause/setVolume. The widget is cross-origin, so its
  * audio can never pass through our Web Audio graph — no lowpass on the
  * stream itself. What we can do is fade it in, duck it through mid-track
- * dropouts, and keep it low while the scene's own noise beds (traffic,
- * ballast hum, crackle) sit around it — that's what sells the distance.
+ * dropouts, and (via onSnippet) let audio.ts lay its room/street noise
+ * wash over the top while a song runs — that's what sells the distance.
  *
  * Verified quirks (headless Edge, 2026-09): widget.load() poisons the
  * player (ERROR event, getters return null, play() no-ops) and seekTo()
@@ -49,13 +49,15 @@ const TRACKS = [
   "https://soundcloud.com/cherryglazerr/addicted-to-your-love",
 ];
 
-/** widget volume 0-100 — audible over the street, still background-quiet */
-const PEAK = 20;
+/** widget volume 0-100 — present but never foreground */
+const PEAK = 15;
 const FADE_IN_MS = 1600;
 const FADE_OUT_MS = 2400;
 const MIN_MS = 10000; // "playing for like 20s, half a min, 10 sec..."
 const MAX_MS = 30000; // "...anywhere in between"
-const READY_TIMEOUT_MS = 10000;
+// cold widget assets regularly need >10s before READY fires (first embed of
+// a session) — a short timeout here burns a fail toward `broken` for nothing
+const READY_TIMEOUT_MS = 20000;
 
 const sleep = (ms: number) => new Promise<void>((r) => window.setTimeout(r, ms));
 
@@ -102,6 +104,9 @@ class ScRadio {
   private fadeTimer = 0;
   private ready = false;
   private readyWait: ((ok: boolean) => void) | null = null;
+  /** notified when a leak actually starts/ends — audio.ts hangs its
+   *  noise wash off this (the widget's own audio can't be filtered) */
+  onSnippet: ((playing: boolean) => void) | null = null;
 
   get available(): boolean {
     return !this.broken && this.dead.size < TRACKS.length;
@@ -134,8 +139,10 @@ class ScRadio {
 
       const total = durMs ?? MIN_MS + Math.random() * (MAX_MS - MIN_MS);
       this.widget?.play();
+      this.onSnippet?.(true); // noise bed rises with the fade-in
       await this.ramp(this.peak, FADE_IN_MS);
       await this.ducks(total);
+      this.onSnippet?.(false); // and leaves with the fade-out
       await this.ramp(0, FADE_OUT_MS);
       this.widget?.pause();
       return true;
@@ -145,6 +152,7 @@ class ScRadio {
       this.silence();
       return false;
     } finally {
+      this.onSnippet?.(false); // never leave the bed stuck on
       this.busy = false;
       if (this.fadeTimer) {
         window.clearInterval(this.fadeTimer);

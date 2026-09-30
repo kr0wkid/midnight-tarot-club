@@ -1,16 +1,24 @@
 /**
  * Procedural audio: sodium-lamp ballast hum, distant traffic,
  * the occasional passing car, and a little lo-fi busking melody —
- * plus occasional quiet leaks of real songs via scRadio.ts.
+ * plus occasional quiet leaks of real songs via scRadio.ts, each one
+ * washed over with room noise (setWash) so it never sounds pristine.
  * No assets, everything is synthesised with the Web Audio API.
  */
 import { scRadio } from "./scRadio";
+
+/** noise wash laid over a leaking song: level + fades matching scRadio's */
+const WASH = 0.045;
+const WASH_IN_MS = 1600;
+const WASH_OUT_MS = 2400;
 
 class GameAudio {
   ctx: AudioContext | null = null;
   master: GainNode | null = null;
   humGain: GainNode | null = null;
   trafficGain: GainNode | null = null;
+  washGain: GainNode | null = null;
+  washActive = false;
   brown: AudioBuffer | null = null;
   white: AudioBuffer | null = null;
   started = false;
@@ -367,6 +375,47 @@ class GameAudio {
     }
   }
 
+  /**
+   * A bed of room/street noise laid OVER a leaking song. The widget is
+   * cross-origin — its stream can never be filtered — so masking the
+   * clarity happens on our side: broadband hiss that rises with the
+   * song's fade-in and leaves with its fade-out.
+   */
+  setWash(on: boolean) {
+    if (!this.ctx || !this.master || !this.white) return;
+    const ctx = this.ctx;
+    if (!this.washGain || this.washGain.context !== ctx) {
+      const src = ctx.createBufferSource();
+      src.buffer = this.white;
+      src.loop = true;
+      const hp = ctx.createBiquadFilter();
+      hp.type = "highpass";
+      hp.frequency.value = 320; // no mud — this sits on TOP of the music
+      const lp = ctx.createBiquadFilter();
+      lp.type = "lowpass";
+      lp.frequency.value = 4800; // air band: hiss, not tone
+      const g = ctx.createGain();
+      g.gain.value = 0;
+      src.connect(hp).connect(lp).connect(g).connect(this.master);
+      // brightness drifts slowly so the bed breathes instead of sitting static
+      const lfo = ctx.createOscillator();
+      lfo.frequency.value = 0.15;
+      const lfoG = ctx.createGain();
+      lfoG.gain.value = 1400;
+      lfo.connect(lfoG).connect(lp.frequency);
+      src.start();
+      lfo.start();
+      this.washGain = g;
+    }
+    const g = this.washGain;
+    const t = ctx.currentTime;
+    const cur = g.gain.value;
+    g.gain.cancelScheduledValues(t);
+    g.gain.setValueAtTime(cur, t);
+    g.gain.linearRampToValueAtTime(on ? WASH : 0, t + (on ? WASH_IN_MS : WASH_OUT_MS) / 1000);
+    this.washActive = on;
+  }
+
   /** one sung note */
   note(freq: number, dur = 0.45, vol = 0.16) {
     if (!this.ctx || !this.master) return;
@@ -628,6 +677,18 @@ class GameAudio {
 }
 
 export const audio = new GameAudio();
+
+// the widget's stream can't be filtered — hang our noise wash off each leak
+scRadio.onSnippet = (playing) => audio.setWash(playing);
+
+/* ---- QA hook (typeof guard: the smokes import this module in Node) ---- */
+if (typeof window !== "undefined") {
+  const w = window as unknown as { __wash?: () => { on: boolean; level: number } };
+  w.__wash = () => ({
+    on: audio.washActive,
+    level: audio.washGain ? audio.washGain.gain.value : -1,
+  });
+}
 
 /** a cosy little pentatonic busking tune */
 const SCALE = [196.0, 220.0, 261.63, 293.66, 349.23, 392.0, 440.0, 523.25];
