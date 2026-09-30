@@ -171,12 +171,14 @@ class GameAudio {
     const loop = () => {
       if (!this.ctx || !this.master) return;
       const r = Math.random();
-      if (r < 0.4 && scRadio.available) this.scLeak();
-      else if (r < 0.65) this.radioSnatch();
-      else if (r < 0.9) this.phoneBleed();
-      window.setTimeout(loop, 55000 + Math.random() * 75000);
+      // 60% a real song leak, 17% radio snatch, 15% phone, 8% quiet night
+      // (when SoundCloud is dead the sc branch falls through to radio)
+      if (r < 0.6 && scRadio.available) this.scLeak();
+      else if (r < 0.77) this.radioSnatch();
+      else if (r < 0.92) this.phoneBleed();
+      window.setTimeout(loop, 45000 + Math.random() * 45000);
     };
-    window.setTimeout(loop, 28000 + Math.random() * 45000);
+    window.setTimeout(loop, 15000 + Math.random() * 15000);
   }
 
   /**

@@ -49,8 +49,8 @@ const TRACKS = [
   "https://soundcloud.com/cherryglazerr/addicted-to-your-love",
 ];
 
-/** widget volume 0-100 — quiet under the ambience, still recognisable */
-const PEAK = 10;
+/** widget volume 0-100 — audible over the street, still background-quiet */
+const PEAK = 20;
 const FADE_IN_MS = 1600;
 const FADE_OUT_MS = 2400;
 const MIN_MS = 10000; // "playing for like 20s, half a min, 10 sec..."
